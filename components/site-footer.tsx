@@ -1,8 +1,27 @@
+'use client'
+
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Lock, Shield } from "lucide-react"
 
 export function SiteFooter() {
+  // Handle smooth scrolling for anchor links
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    
+    // If we're not on the home page and clicking a section link
+    if (window.location.pathname !== '/' && href.startsWith('#')) {
+      window.location.href = '/' + href
+      return
+    }
+    
+    // If we're on the home page, just scroll to the section
+    const element = document.querySelector(href)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <footer className="bg-black border-t border-gray-800">
       <div className="container mx-auto px-4 py-12">
@@ -24,7 +43,7 @@ export function SiteFooter() {
               </Badge>
             </div>
           </div>
-
+          
           {/* Solutions */}
           <div>
             <h4 className="text-white font-semibold mb-4">Solutions</h4>
@@ -35,23 +54,44 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/#manifesto" className="hover:text-cyan-400 transition-colors">
+                <a 
+                  href="#manifesto" 
+                  onClick={(e) => handleAnchorClick(e, '#manifesto')}
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                >
                   AI Sovereignty Manifesto
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/#technologies" className="hover:text-cyan-400 transition-colors">
+                <a 
+                  href="#technologies" 
+                  onClick={(e) => handleAnchorClick(e, '#technologies')}
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                >
                   Technologies We Command
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="/#comparison" className="hover:text-cyan-400 transition-colors">
+                <a 
+                  href="#comparison" 
+                  onClick={(e) => handleAnchorClick(e, '#comparison')}
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                >
                   Why Choose Covren
-                </Link>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#assessment" 
+                  onClick={(e) => handleAnchorClick(e, '#assessment')}
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                >
+                  AI Readiness Assessment
+                </a>
               </li>
             </ul>
           </div>
-
+          
           {/* Navigate */}
           <div>
             <h4 className="text-white font-semibold mb-4">Navigate</h4>
