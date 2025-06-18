@@ -3,20 +3,40 @@
 import Link from "next/link"
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Menu, X, Zap } from "lucide-react" // Zap for AI/Power
+import { Menu, X, Zap } from "lucide-react"
 import GlowingButton from "./ui/glowing-button"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
-// Define navItems cleanly without the previously commented-out item
+// Updated navItems to match actual section IDs on your homepage
 const navItems = [
-  { href: "#services", label: "Services" },
-  { href: "#about", label: "Why Covren?" },
-  { href: "#tech", label: "Technology" }, // Explicitly no comma
+  { href: "#impact", label: "Our Impact" },
+  { href: "#technologies", label: "Technology" },
+  { href: "#manifesto", label: "Why Covren?" },
+  { href: "#comparison", label: "Compare" },
+]
+
+// Additional navigation items for pages
+const pageLinks = [
+  { href: "/about", label: "About" },
+  { href: "/sovren-ai", label: "SovrenAI" },
 ]
 
 export default function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Handle smooth scrolling for anchor links
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Only handle if it's an anchor link (starts with #)
+    if (href.startsWith('#')) {
+      e.preventDefault()
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+      setIsMobileMenuOpen(false)
+    }
+  }
 
   return (
     <motion.header
@@ -35,6 +55,16 @@ export default function SiteHeader() {
 
         <nav className="hidden items-center space-x-6 md:flex">
           {navItems.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              onClick={(e) => handleAnchorClick(e, item.href)}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer"
+            >
+              {item.label}
+            </a>
+          ))}
+          {pageLinks.map((item) => (
             <Link
               key={item.label}
               href={item.href}
@@ -47,7 +77,7 @@ export default function SiteHeader() {
 
         <div className="flex items-center space-x-2">
           <GlowingButton asChild className="hidden md:inline-flex">
-            <Link href="#contact">Contact Us</Link>
+            <Link href="/contact">Get Started</Link>
           </GlowingButton>
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -77,18 +107,31 @@ export default function SiteHeader() {
               <nav className="flex flex-col space-y-3">
                 {navItems.map((item) => (
                   <SheetClose asChild key={item.label}>
-                    <Link
+                    <a
                       href={item.href}
-                      className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                      onClick={(e) => handleAnchorClick(e, item.href)}
+                      className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary cursor-pointer"
                     >
                       {item.label}
-                    </Link>
+                    </a>
                   </SheetClose>
                 ))}
+                <div className="border-t border-gray-800 mt-3 pt-3">
+                  {pageLinks.map((item) => (
+                    <SheetClose asChild key={item.label}>
+                      <Link
+                        href={item.href}
+                        className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </div>
               </nav>
               <GlowingButton asChild className="mt-8 w-full">
-                <Link href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
-                  Contact Us
+                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  Get Started
                 </Link>
               </GlowingButton>
             </SheetContent>
