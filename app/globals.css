@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%; /* #0a0a0a */
+    --foreground: 0 0% 95%; /* #f2f2f2 - slightly brighter for better contrast */
+
+    --card: 0 0% 8%; /* #141414 - for opaque card backgrounds if needed */
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 190 100% 50%; /* #00d4ff - electric cyan */
+    --primary-foreground: 0 0% 4%; /* #0a0a0a - for text on primary buttons */
+
+    --secondary: 190 100% 35%; /* Darker cyan */
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%; /* #262626 */
+    --muted-foreground: 0 0% 65%; /* #a6a6a6 */
+
+    --accent: 190 100% 60%; /* Lighter cyan for hover states or highlights */
+    --accent-foreground: 0 0% 4%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 95%;
+
+    /* Adjusted for glassmorphism and cyan accents */
+    --border: 190 100% 50% / 0.2; /* semi-transparent cyan */
+    --input: 0 0% 10% / 0.5; /* semi-transparent dark input bg */
+    --ring: 190 100% 55%; /* cyan focus ring */
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 190 100% 50%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 190 100% 35%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 190 100% 60%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 190 100% 50% / 0.2;
+    --input: 0 0% 10% / 0.5;
+    --ring: 190 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* scroll-behavior: smooth; /* Consider Lenis for advanced smooth scroll */
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+}
+
+/* Animated gradient background for hero (example) */
+.animated-gradient-hero-bg {
+  background: linear-gradient(
+    -45deg,
+    hsl(var(--background)),
+    hsl(200 80% 10%) /* Deep Blue */,
+    hsl(190 100% 20%) /* Darker Cyan */,
+    hsl(var(--background))
+  );
+  background-size: 400% 400%;
+  animation: gradient-bg 20s ease infinite;
+}
