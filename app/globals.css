@@ -173,6 +173,15 @@
   100% { background-position: 0% 50%; }
 }
 
+@keyframes gradient-x {
+  0%, 100% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+}
+
 /* Utility Classes */
 .animate-fade-in {
   animation: fade-in 1s ease-out;
@@ -202,6 +211,11 @@
 
 .animate-scale-in {
   animation: scale-in 0.5s ease-out;
+}
+
+.animate-gradient-x {
+  animation: gradient-x 15s ease infinite;
+  background-size: 200% 200%;
 }
 
 /* Glass Effects */
