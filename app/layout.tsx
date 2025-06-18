@@ -4,8 +4,8 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import SiteHeader from "@/components/site-header"
-import SiteFooter from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 import { cn } from "@/lib/utils"
 import { Toaster } from "sonner" // For potential notifications
 
