@@ -1,634 +1,701 @@
-"use client"
+'use client'
 
-import HeroSection from "@/components/sections/hero-section"
-import GlassCard from "@/components/ui/glass-card"
-import GlowingButton from "@/components/ui/glowing-button"
-import {
-  Code,
-  BrainCircuit,
-  Scaling,
-  Layers,
-  FlaskConical,
-  CheckCircle,
-  Zap,
-  BarChart3,
-  Cpu,
-  Eye,
-  Mail,
-  Database,
-  GitBranch,
-  Cloud,
-  Settings2,
-  Activity,
-  Shield,
-  Globe,
-  Clock,
-  Award,
-} from "lucide-react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowRight, Zap, Shield, Users, ChevronDown, Brain, Lock, Rocket, Globe, Award, TrendingUp, CheckCircle2, XCircle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import HeroSection from '@/components/hero-section'
+import { GlassCard } from "@/components/ui/glass-card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
-const services = [
-  {
-    title: "FULL-STACK CUSTOM DEVELOPMENT",
-    description1: "End-to-end AI solutions tailored to your exact needs.",
-    description2: "100% custom code. Zero templates. Pure innovation.",
-    icon: Code,
-  },
-  {
-    title: "AI STRATEGY & CONSULTING",
-    description1: "Transform your business with sovereign AI integration.",
-    description2: "Strategic roadmaps that guarantee market leadership.",
-    icon: BrainCircuit,
-  },
-  {
-    title: "ENTERPRISE AI SOLUTIONS",
-    description1: "Scale your operations with custom AI systems.",
-    description2: "Built for sovereignty, engineered for dominance.",
-    icon: Scaling,
-  },
-  {
-    title: "SOVREN AI PLATFORM",
-    description1: "Our flagship autonomous AI command system.",
-    description2: "Your digital chief of staff. 24/7. Unstoppable.",
-    icon: Zap,
-    featured: true,
-    link: "/sovren-ai",
-  },
-  {
-    title: "AI INTEGRATION SERVICES",
-    description1: "Seamlessly integrate AI into existing infrastructure.",
-    description2: "Legacy modernization that pays for itself.",
-    icon: Layers,
-  },
-  {
-    title: "RESEARCH & DEVELOPMENT",
-    description1: "Pushing the boundaries of what's possible.",
-    description2: "Tomorrow's AI, delivered today.",
-    icon: FlaskConical,
-  },
-]
-
-const differentiators = [
-  {
-    title: "Full-Stack Capability",
-    description: "From bare metal to user interface, we control the entire AI pipeline. No dependencies. No limitations. No excuses.",
-  },
-  {
-    title: "True Custom Development",
-    description: "Bespoke AI, not repurposed templates. Every algorithm, every model, every line of code is crafted specifically for your unique challenges.",
-  },
-  {
-    title: "Sovereign Solutions",
-    description: "Complete ownership and control. Deploy on your infrastructure, modify without restrictions, evolve without us. True digital independence.",
-  },
-]
-
-const techArsenalItems = [
-  { name: "Next.js & React", icon: Code, category: "Frontend & Full-Stack" },
-  { name: "Python", icon: Code, category: "Backend & AI/ML" },
-  { name: "Three.js / WebGL", icon: Layers, category: "3D & Visualization" },
-  { name: "TensorFlow & PyTorch", icon: BrainCircuit, category: "Machine Learning" },
-  { name: "CUDA & HPC", icon: Cpu, category: "High-Performance Computing" },
-  { name: "Kubernetes & Docker", icon: Cloud, category: "DevOps & Scalability" },
-  { name: "PostgreSQL & Vector DBs", icon: Database, category: "Data Management" },
-  { name: "Git & CI/CD", icon: GitBranch, category: "Version Control & Automation" },
-]
-
-const techSpecializations = [
-  {
-    name: "Natural Language Processing",
-    icon: BrainCircuit,
-    description: "Advanced understanding and generation of human language for complex interactions.",
-  },
-  {
-    name: "Computer Vision & Image Analysis",
-    icon: Eye,
-    description: "Enabling systems to interpret, analyze, and act on visual information with precision.",
-  },
-  {
-    name: "Predictive Analytics & Forecasting",
-    icon: BarChart3,
-    description: "Leveraging data to forecast future trends, behaviors, and outcomes with high accuracy.",
-  },
-  {
-    name: "Autonomous AI Agents",
-    icon: Zap,
-    description: "Developing self-governing AI entities capable of complex decision-making and operations.",
-  },
-  {
-    name: "Reinforcement Learning Systems",
-    icon: Activity,
-    description: "Training AI agents to master tasks and optimize strategies through interactive learning.",
-  },
-  {
-    name: "Generative AI & Model Customization",
-    icon: Settings2,
-    description: "Creating novel content and fine-tuning foundational models for specific applications.",
-  },
-]
-
-const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
-}
-
-const cardListVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
-}
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
+// Define section refs type
+type SectionRefs = {
+  [key: string]: React.RefObject<HTMLElement>
 }
 
 export default function HomePage() {
-  return (
-    <div className="flex flex-col overflow-x-hidden">
-      <HeroSection />
+  const [activeSection, setActiveSection] = useState('')
+  const [assessmentScore, setAssessmentScore] = useState(0)
+  const [showAssessment, setShowAssessment] = useState(false)
+
+  // Create refs for sections
+  const sectionRefs: SectionRefs = {
+    impact: { current: null },
+    technologies: { current: null },
+    manifesto: { current: null },
+    comparison: { current: null },
+    assessment: { current: null },
+    faq: { current: null }
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 100
       
-      <motion.section
-        id="services"
-        className="py-20 md:py-32 bg-background"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
-            Our Unmatched AI Capabilities
-          </h2>
-          <p className="mt-4 text-center text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto">
-            We deliver end-to-end AI solutions, from strategic consulting to bespoke development and deployment.
-          </p>
-          <motion.div
-            className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-            variants={cardListVariants}
-          >
-            {services.map((service) => (
-              <motion.div key={service.title} variants={cardVariants}>
-                <GlassCard className="flex h-full flex-col p-6 md:p-7 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300" glow={service.featured}>
-                  <div className="mb-4 flex items-center">
-                    <service.icon
-                      className={`mr-3 h-7 w-7 ${service.featured ? "text-primary animate-subtle-glow" : "text-primary/70"}`}
-                    />
-                    <h3 className="text-lg font-semibold text-foreground">{service.title}</h3>
-                  </div>
-                  <p className="mb-2 text-sm text-muted-foreground">{service.description1}</p>
-                  <p className="text-sm text-muted-foreground flex-grow">{service.description2}</p>
-                  {service.link && (
-                    <Link href={service.link} className="text-primary hover:underline font-medium mt-4">
-                      Learn More →
-                    </Link>
-                  )}
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
+      Object.entries(sectionRefs).forEach(([key, ref]) => {
+        if (ref.current) {
+          const { offsetTop, offsetHeight } = ref.current
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(key)
+          }
+        }
+      })
+    }
 
-      <motion.section
-        id="about"
-        className="py-20 md:py-32 bg-gradient-to-b from-background to-card"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
-            What Sets Covren Firm Apart
-          </h2>
-          <p className="mt-4 text-center text-lg italic text-muted-foreground md:text-xl max-w-2xl mx-auto">
-            "While others offer templates, we build empires."
-          </p>
-          <motion.div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3" variants={cardListVariants}>
-            {differentiators.map((item) => (
-              <motion.div key={item.title} variants={cardVariants}>
-                <GlassCard className="h-full p-8 text-center hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300">
-                  <CheckCircle className="mx-auto mb-4 h-10 w-10 text-primary animate-float" />
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-      {/* NEW: The Covren Impact Section */}
-      <motion.section
-        className="py-20 md:py-32 bg-gradient-to-b from-black to-gray-900"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
-            The Covren Impact
-          </h2>
-          <p className="mt-4 text-center text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto">
-            Our clients don't just implement AI - they dominate with it.
-          </p>
-          
-          <motion.div 
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
-            variants={cardListVariants}
-          >
-            <motion.div variants={cardVariants}>
-              <GlassCard className="p-6 text-center">
-                <div className="text-4xl font-bold text-primary mb-2">340%</div>
-                <div className="text-sm text-muted-foreground">Avg Productivity Increase</div>
-              </GlassCard>
-            </motion.div>
-            <motion.div variants={cardVariants}>
-              <GlassCard className="p-6 text-center">
-                <div className="text-4xl font-bold text-primary mb-2">90%</div>
-                <div className="text-sm text-muted-foreground">Process Automation</div>
-              </GlassCard>
-            </motion.div>
-            <motion.div variants={cardVariants}>
-              <GlassCard className="p-6 text-center">
-                <div className="text-4xl font-bold text-primary mb-2">6 mo</div>
-                <div className="text-sm text-muted-foreground">Average ROI Timeline</div>
-              </GlassCard>
-            </motion.div>
-            <motion.div variants={cardVariants}>
-              <GlassCard className="p-6 text-center">
-                <div className="text-4xl font-bold text-primary mb-2">100%</div>
-                <div className="text-sm text-muted-foreground">Client Satisfaction</div>
-              </GlassCard>
-            </motion.div>
-          </motion.div>
-          
-          <p className="mt-12 text-center text-xl text-muted-foreground italic max-w-3xl mx-auto">
-            "Every line of code we write is an investment in your competitive advantage."
-          </p>
-        </div>
-      </motion.section>
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  }
 
-      {/* NEW: AI Sovereignty Manifesto */}
-      <motion.section
-        className="py-20 md:py-32 bg-black"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl mb-12">
-            The AI Sovereignty Manifesto
-          </h2>
-          <GlassCard className="max-w-4xl mx-auto p-8 md:p-12" glow={true}>
-            <p className="text-2xl text-foreground leading-relaxed mb-8 font-light text-center">
-              "In an age where your data is currency and your AI is your competitive edge, 
-              sovereignty isn't optional—it's survival."
-            </p>
-            <div className="space-y-6 text-lg">
-              <div className="flex items-start gap-4">
-                <span className="text-primary text-2xl">▸</span>
-                <p><span className="text-primary font-semibold">We believe</span> every organization deserves complete ownership of their AI destiny.</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="text-primary text-2xl">▸</span>
-                <p><span className="text-primary font-semibold">We reject</span> vendor lock-in, black-box solutions, and data dependencies.</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="text-primary text-2xl">▸</span>
-                <p><span className="text-primary font-semibold">We deliver</span> AI systems you own, control, and can evolve independently.</p>
-              </div>
+  const assessmentQuestions = [
+    "Do you have full control over your AI models and data?",
+    "Can you deploy AI solutions on your own infrastructure?",
+    "Are you confident in your AI security measures?",
+    "Do you have the capability to customize AI for your needs?",
+    "Is your organization prepared for AI regulations?"
+  ]
+
+  const calculateAssessment = (answers: boolean[]) => {
+    const score = (answers.filter(a => a).length / answers.length) * 100
+    setAssessmentScore(score)
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <HeroSection />
+
+      {/* Trust Indicators Bar */}
+      <section className="py-6 bg-gradient-to-r from-gray-900 via-blue-900/20 to-gray-900 border-y border-cyan-500/20">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-sm">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-cyan-400" />
+              <span className="text-gray-300">Enterprise-Grade Security</span>
             </div>
-          </GlassCard>
+            <div className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-cyan-400" />
+              <span className="text-gray-300">Industry Leading Solutions</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-cyan-400" />
+              <span className="text-gray-300">Global Deployment Ready</span>
+            </div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* Technology Arsenal Section - Updated */}
-      <motion.section
-        id="tech"
-        className="py-20 md:py-32 bg-background"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <div className="text-center mb-16 md:mb-20">
-            <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
-              Our AI-Powered Solutions
+      {/* The Covren Impact Section */}
+      <section ref={sectionRefs.impact} id="impact" className="py-24 bg-gradient-to-b from-gray-900 to-black">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center mb-16">
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+              Proven Results
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              The Covren Impact
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground md:text-xl max-w-3xl mx-auto">
-              Leveraging cutting-edge AI and deep specializations to transform how organizations harness the power of intelligent technology.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Organizations worldwide trust us to transform their AI capabilities into competitive advantages
             </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <GlassCard>
+              <CardHeader>
+                <TrendingUp className="w-12 h-12 text-cyan-400 mb-4" />
+                <CardTitle className="text-2xl text-white">3X Efficiency</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300">
+                  Average operational efficiency improvement reported by our clients within 6 months
+                </p>
+              </CardContent>
+            </GlassCard>
+
+            <GlassCard>
+              <CardHeader>
+                <Shield className="w-12 h-12 text-cyan-400 mb-4" />
+                <CardTitle className="text-2xl text-white">100% Sovereign</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300">
+                  Complete data ownership and control maintained across all deployments
+                </p>
+              </CardContent>
+            </GlassCard>
+
+            <GlassCard>
+              <CardHeader>
+                <Rocket className="w-12 h-12 text-cyan-400 mb-4" />
+                <CardTitle className="text-2xl text-white">60-Day Deployment</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300">
+                  From concept to production-ready AI systems in just two months
+                </p>
+              </CardContent>
+            </GlassCard>
           </div>
 
-          <motion.div className="mb-16 md:mb-20" variants={cardVariants}>
-            <GlassCard className="p-8 md:p-10" glow={false}>
-              <h3 className="mb-8 text-2xl font-semibold text-foreground text-center tracking-wide">
-                Core Technology Arsenal
-              </h3>
-              <motion.div
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-6 md:gap-x-6 md:gap-y-8"
-                variants={cardListVariants}
-              >
-                {techArsenalItems.map((tech, index) => (
-                  <motion.div
-                    key={tech.name}
-                    className="group flex flex-col items-center text-center"
-                    variants={cardVariants}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+          <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-8 border border-cyan-500/30">
+            <blockquote className="text-center">
+              <p className="text-2xl text-white mb-4 italic">
+                "Covren transformed our approach to AI. We now have complete control over our models and data, 
+                giving us the sovereignty we need to innovate without constraints."
+              </p>
+              <footer className="text-gray-400">
+                — Leading Technology Executive
+              </footer>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      {/* Technologies We Command Section */}
+      <section ref={sectionRefs.technologies} id="technologies" className="py-24 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center mb-16">
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+              Tech Stack
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Technologies We Command
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Building sovereign AI solutions with industry-leading technologies
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center justify-items-center">
+            {/* AI/ML Technologies */}
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">PyTorch</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">TensorFlow</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">HuggingFace</span>
+              </div>
+            </div>
+            
+            {/* Cloud & Infrastructure */}
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">AWS</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">Azure</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">Docker</span>
+              </div>
+            </div>
+            
+            {/* Development Stack */}
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">Python</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">React</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">Node.js</span>
+              </div>
+            </div>
+            
+            {/* Data & Security */}
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">PostgreSQL</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">MongoDB</span>
+              </div>
+            </div>
+            <div className="tech-logo-wrapper group">
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
+                <span className="text-white font-bold text-lg">Kubernetes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Sovereignty Manifesto Section */}
+      <section ref={sectionRefs.manifesto} id="manifesto" className="py-24 bg-gradient-to-b from-black to-gray-900">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+                Our Philosophy
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                The AI Sovereignty Manifesto
+              </h2>
+            </div>
+
+            <GlassCard className="p-8 md:p-12">
+              <div className="space-y-8">
+                <div className="border-l-4 border-cyan-500 pl-6">
+                  <h3 className="text-2xl font-bold text-white mb-3">Own Your Intelligence</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    In the age of AI, sovereignty isn't just about data—it's about owning the very intelligence 
+                    that drives your organization. We believe every organization deserves complete control over 
+                    their AI destiny.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-blue-500 pl-6">
+                  <h3 className="text-2xl font-bold text-white mb-3">Build Without Boundaries</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    True innovation happens when you're free from vendor lock-in and platform limitations. 
+                    Our sovereign AI solutions give you the freedom to build, deploy, and scale on your terms.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-purple-500 pl-6">
+                  <h3 className="text-2xl font-bold text-white mb-3">Secure by Design</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    Security isn't an afterthought—it's the foundation. Every solution we build starts with 
+                    zero-trust architecture and ends with you having complete control over access and governance.
+                  </p>
+                </div>
+
+                <div className="mt-12 text-center">
+                  <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-6">
+                    "We don't just build AI systems. We build empires."
+                  </p>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-cyan-500/25"
                   >
-                    <div className="mb-3 p-4 bg-primary/5 border border-primary/20 rounded-xl group-hover:bg-primary/10 group-hover:shadow-neon-cyan-soft transition-all duration-300">
-                      <tech.icon className="h-8 w-8 md:h-10 md:w-10 text-primary transition-colors duration-300" />
-                    </div>
-                    <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors duration-300">
-                      {tech.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{tech.category}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
+                    Start Your Sovereignty Journey
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
             </GlassCard>
           </motion.div>
-
-          <motion.div variants={sectionVariants}>
-            <h3 className="mb-10 md:mb-12 text-2xl font-semibold text-foreground text-center tracking-wide">
-              Deep Specializations
-            </h3>
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-              variants={cardListVariants}
-            >
-              {techSpecializations.map((spec) => (
-                <motion.div key={spec.name} variants={cardVariants}>
-                  <GlassCard className="p-6 md:p-7 h-full hover:shadow-neon-cyan-medium transition-shadow duration-300">
-                    <div className="flex items-start mb-4">
-                      <div className="mr-4 flex-shrink-0 p-3 bg-primary/10 rounded-lg ring-1 ring-primary/20">
-                        <spec.icon className="h-7 w-7 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground">{spec.name}</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{spec.description}</p>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* NEW: Comparison Section */}
-      <motion.section
-        className="py-20 md:py-32 bg-gradient-to-b from-gray-900 to-black"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl mb-4">
-            Why Organizations Choose Covren
-          </h2>
-          <p className="text-center text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto mb-16">
-            While others offer templates, we build empires.
-          </p>
-          
-          <GlassCard className="max-w-5xl mx-auto p-8 md:p-12">
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
-                <h3 className="text-2xl font-bold text-primary mb-8 flex items-center gap-3">
-                  <CheckCircle className="h-8 w-8" />
-                  Covren Firm
-                </h3>
-                <ul className="space-y-6">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-400 text-xl flex-shrink-0">✓</span>
-                    <div>
-                      <span className="font-semibold text-foreground">100% Custom Development</span>
-                      <p className="text-muted-foreground text-sm mt-1">Bespoke AI, built from scratch for your needs</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-400 text-xl flex-shrink-0">✓</span>
-                    <div>
-                      <span className="font-semibold text-foreground">Complete Ownership</span>
-                      <p className="text-muted-foreground text-sm mt-1">You own all code, models, data, and IP</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-400 text-xl flex-shrink-0">✓</span>
-                    <div>
-                      <span className="font-semibold text-foreground">Sovereign Infrastructure</span>
-                      <p className="text-muted-foreground text-sm mt-1">Deploy on your servers, maintain full control</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-400 text-xl flex-shrink-0">✓</span>
-                    <div>
-                      <span className="font-semibold text-foreground">Results Guaranteed</span>
-                      <p className="text-muted-foreground text-sm mt-1">100% money-back if we don't deliver</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-400 text-xl flex-shrink-0">✓</span>
-                    <div>
-                      <span className="font-semibold text-foreground">Elite In-House Team</span>
-                      <p className="text-muted-foreground text-sm mt-1">Not outsourced, not offshored, all experts</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="opacity-50">
-                <h3 className="text-2xl font-bold text-gray-500 mb-8 flex items-center gap-3">
-                  <span className="text-3xl">✗</span>
-                  Typical Consultancy
-                </h3>
-                <ul className="space-y-6">
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl flex-shrink-0">✗</span>
-                    <div>
-                      <span className="font-semibold">Template Solutions</span>
-                      <p className="text-gray-600 text-sm mt-1">One-size-fits-all approaches</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl flex-shrink-0">✗</span>
-                    <div>
-                      <span className="font-semibold">Licensed Access Only</span>
-                      <p className="text-gray-600 text-sm mt-1">Pay forever, own nothing</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl flex-shrink-0">✗</span>
-                    <div>
-                      <span className="font-semibold">Vendor Lock-In</span>
-                      <p className="text-gray-600 text-sm mt-1">Trapped in their ecosystem</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl flex-shrink-0">✗</span>
-                    <div>
-                      <span className="font-semibold">Best Effort Only</span>
-                      <p className="text-gray-600 text-sm mt-1">No guarantees, just invoices</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl flex-shrink-0">✗</span>
-                    <div>
-                      <span className="font-semibold">Outsourced Development</span>
-                      <p className="text-gray-600 text-sm mt-1">Lowest bidder delivers</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </GlassCard>
-        </div>
-      </motion.section>
-
-      {/* NEW: AI Readiness Assessment */}
-      <motion.section
-        className="py-20 md:py-32 bg-gradient-to-b from-black to-gray-900"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl mb-6">
-            Is Your Organization AI-Ready?
-          </h2>
-          <p className="text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto mb-10">
-            Take our 2-minute assessment and discover your AI transformation potential
-          </p>
-          <GlowingButton size="xl" asChild className="transform hover:scale-105 transition-all duration-300">
-            <Link href="/contact?subject=AIAssessment">
-              <BarChart3 className="mr-2 h-5 w-5" />
-              Start Free AI Assessment
-            </Link>
-          </GlowingButton>
-          <p className="mt-6 text-sm text-muted-foreground">
-            Join 500+ leaders who've discovered their AI opportunity
-          </p>
-        </div>
-      </motion.section>
-
-      {/* NEW: Trust Indicators Bar */}
-      <motion.section
-        className="py-12 bg-black border-y border-gray-800"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <motion.div 
-            className="flex flex-wrap justify-center items-center gap-8 text-foreground"
-            variants={cardListVariants}
-          >
-            <motion.div variants={cardVariants} className="flex items-center gap-3 hover:text-primary transition-colors">
-              <Shield className="h-8 w-8" />
-              <div>
-                <div className="font-semibold">SOC2 Compliant</div>
-                <div className="text-xs text-muted-foreground">Enterprise Security</div>
-              </div>
-            </motion.div>
-            <motion.div variants={cardVariants} className="flex items-center gap-3 hover:text-primary transition-colors">
-              <Award className="h-8 w-8" />
-              <div>
-                <div className="font-semibold">100% IP Protection</div>
-                <div className="text-xs text-muted-foreground">You Own Everything</div>
-              </div>
-            </motion.div>
-            <motion.div variants={cardVariants} className="flex items-center gap-3 hover:text-primary transition-colors">
-              <Globe className="h-8 w-8" />
-              <div>
-                <div className="font-semibold">Global Delivery</div>
-                <div className="text-xs text-muted-foreground">5 Continents Served</div>
-              </div>
-            </motion.div>
-            <motion.div variants={cardVariants} className="flex items-center gap-3 hover:text-primary transition-colors">
-              <Clock className="h-8 w-8" />
-              <div>
-                <div className="font-semibold">24/7 Support</div>
-                <div className="text-xs text-muted-foreground">Always Available</div>
-              </div>
-            </motion.div>
-            <motion.div variants={cardVariants} className="flex items-center gap-3 hover:text-primary transition-colors">
-              <CheckCircle className="h-8 w-8" />
-              <div>
-                <div className="font-semibold">Results Guaranteed</div>
-                <div className="text-xs text-muted-foreground">Or Money Back</div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Updated Contact Section */}
-      <motion.section
-        id="contact"
-        className="py-20 md:py-32 bg-gradient-to-t from-blue-900/20 to-black"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionVariants}
-      >
-        <div className="container">
-          <GlassCard className="max-w-3xl mx-auto p-8 md:p-12 text-center" glow={true}>
-            <Mail className="h-12 w-12 text-primary mx-auto mb-6 animate-float" />
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl mb-6">
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Ready to Build the Impossible?
-              </span>
+      {/* Comparison Section */}
+      <section ref={sectionRefs.comparison} id="comparison" className="py-24 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center mb-16">
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+              Why Choose Covren
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              The Sovereignty Difference
             </h2>
-            <p className="text-lg text-muted-foreground md:text-xl mb-8">
-              Partner with Covren Firm to transform your vision into sovereign digital reality. 
-              Let's discuss how our custom AI solutions can redefine your future.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              See why forward-thinking organizations choose sovereign AI over traditional solutions
             </p>
-            
-            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-8 inline-block">
-              <p className="text-red-400 font-semibold">
-                ⚡ Limited Availability: Currently accepting 3 new partnerships for Q2 2025
-              </p>
-              <p className="text-sm text-gray-400 mt-1">
-                Average project waitlist: 4-6 weeks
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <GlowingButton size="xl" asChild className="transform hover:scale-105 transition-all duration-300">
-                <Link href="/contact?subject=ProjectInquiry" className="flex items-center gap-2">
-                  <Zap className="h-6 w-6" />
-                  <span>Book Your AI Strategy Session</span>
-                </Link>
-              </GlowingButton>
-              <span className="text-muted-foreground">or</span>
-              <Link href="/sovren-ai" className="text-primary hover:text-primary/80 font-semibold text-lg transition-colors">
-                Explore SovrenAI Platform →
-              </Link>
-            </div>
-          </GlassCard>
-        </div>
-      </motion.section>
+          </motion.div>
 
-      {/* Floating Elements */}
-      <div className="fixed bottom-8 right-8 bg-card/90 backdrop-blur-sm text-foreground p-4 rounded-lg shadow-2xl z-50 border border-primary/20 hidden md:block">
-        <div className="text-sm font-semibold flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" />
-          <div>
-            <div>SOC2 Compliant</div>
-            <div className="text-xs text-muted-foreground">Your AI. Your Data. Your Control.</div>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Traditional AI */}
+              <GlassCard className="border-red-500/30">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-red-400 flex items-center gap-2">
+                    <XCircle className="w-6 h-6" />
+                    Traditional AI Vendors
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Vendor lock-in with proprietary platforms</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Your data trains their models</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Limited customization options</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Recurring subscription costs</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Black-box solutions with no transparency</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </GlassCard>
+
+              {/* Covren Sovereign AI */}
+              <GlassCard className="border-cyan-500/30 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-gradient-to-l from-cyan-500/20 to-transparent w-32 h-32" />
+                <CardHeader>
+                  <CardTitle className="text-2xl text-cyan-400 flex items-center gap-2">
+                    <CheckCircle2 className="w-6 h-6" />
+                    Covren Sovereign AI
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Complete ownership of your AI infrastructure</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Your data stays yours, always</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Fully customizable to your exact needs</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">One-time investment, lifetime value</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">Full transparency and control</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </GlassCard>
+            </div>
+
+            <motion.div 
+              {...fadeInUp}
+              className="mt-12 text-center"
+            >
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-cyan-500/25"
+              >
+                Choose Sovereignty
+                <Shield className="ml-2 h-5 w-5" />
+              </Button>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* AI Readiness Assessment */}
+      <section ref={sectionRefs.assessment} id="assessment" className="py-24 bg-gradient-to-b from-gray-900 to-black">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+                Free Assessment
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                AI Sovereignty Readiness Assessment
+              </h2>
+              <p className="text-xl text-gray-300">
+                Discover how ready your organization is for sovereign AI
+              </p>
+            </div>
+
+            <GlassCard className="p-8">
+              {!showAssessment ? (
+                <div className="text-center">
+                  <Brain className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    Take the 2-Minute Assessment
+                  </h3>
+                  <p className="text-gray-300 mb-8">
+                    Answer 5 quick questions to evaluate your organization's AI sovereignty readiness
+                  </p>
+                  <Button
+                    size="lg"
+                    onClick={() => setShowAssessment(true)}
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                  >
+                    Start Assessment
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  {assessmentScore === 0 ? (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                    >
+                      <h3 className="text-2xl font-bold text-white mb-8">Quick Assessment</h3>
+                      <div className="space-y-6">
+                        {assessmentQuestions.map((question, index) => (
+                          <div key={index} className="p-4 bg-gray-800/50 rounded-lg">
+                            <p className="text-white mb-3">{question}</p>
+                            <div className="flex gap-4">
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  const answers = new Array(5).fill(false)
+                                  answers[index] = true
+                                  if (index === 4) {
+                                    calculateAssessment(answers)
+                                  }
+                                }}
+                                className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                              >
+                                Yes
+                              </Button>
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  const answers = new Array(5).fill(false)
+                                  if (index === 4) {
+                                    calculateAssessment(answers)
+                                  }
+                                }}
+                                className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10"
+                              >
+                                No
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center"
+                    >
+                      <div className="mb-8">
+                        <div className="w-32 h-32 mx-auto mb-6 relative">
+                          <svg className="w-32 h-32 transform -rotate-90">
+                            <circle
+                              cx="64"
+                              cy="64"
+                              r="56"
+                              stroke="currentColor"
+                              strokeWidth="8"
+                              fill="none"
+                              className="text-gray-700"
+                            />
+                            <circle
+                              cx="64"
+                              cy="64"
+                              r="56"
+                              stroke="currentColor"
+                              strokeWidth="8"
+                              fill="none"
+                              strokeDasharray={`${2 * Math.PI * 56}`}
+                              strokeDashoffset={`${2 * Math.PI * 56 * (1 - assessmentScore / 100)}`}
+                              className="text-cyan-400 transition-all duration-1000"
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-3xl font-bold text-white">{assessmentScore}%</span>
+                          </div>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                          Your AI Sovereignty Score
+                        </h3>
+                        <p className="text-gray-300 mb-8">
+                          {assessmentScore < 40 
+                            ? "Your organization has significant opportunities to improve AI sovereignty."
+                            : assessmentScore < 70
+                            ? "You're on the right track but there's room for improvement."
+                            : "Great! Your organization is well-positioned for AI sovereignty."}
+                        </p>
+                      </div>
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                      >
+                        Get Detailed Analysis
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
+            </GlassCard>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section ref={sectionRefs.faq} id="faq" className="py-24 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-4 bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+                FAQ
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Frequently Asked Questions
+              </h2>
+            </div>
+
+            <Accordion type="single" collapsible className="space-y-4">
+              <AccordionItem value="item-1" className="bg-gray-900/50 border border-gray-800 rounded-lg px-6">
+                <AccordionTrigger className="text-white hover:text-cyan-400">
+                  What exactly is Sovereign AI?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  Sovereign AI means having complete ownership and control over your AI infrastructure, models, and data. 
+                  Unlike traditional cloud-based AI services, sovereign solutions run on your infrastructure, ensuring 
+                  your sensitive data never leaves your control and your AI capabilities remain independent of external vendors.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="bg-gray-900/50 border border-gray-800 rounded-lg px-6">
+                <AccordionTrigger className="text-white hover:text-cyan-400">
+                  How long does implementation take?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  Typical implementations range from 30-90 days depending on complexity. We start with a discovery phase 
+                  to understand your needs, followed by rapid prototyping and deployment. Our agile approach ensures you 
+                  see value quickly while building toward your complete sovereign AI solution.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="bg-gray-900/50 border border-gray-800 rounded-lg px-6">
+                <AccordionTrigger className="text-white hover:text-cyan-400">
+                  Do we need AI expertise in-house?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  No. We design our solutions to be managed by your existing IT team. We provide comprehensive training, 
+                  documentation, and ongoing support. Our goal is to make sovereign AI accessible to organizations regardless 
+                  of their current AI expertise level.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="bg-gray-900/50 border border-gray-800 rounded-lg px-6">
+                <AccordionTrigger className="text-white hover:text-cyan-400">
+                  What about ongoing support and updates?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  We offer flexible support packages tailored to your needs. This includes model updates, security patches, 
+                  performance optimization, and 24/7 technical support. You maintain full control while having expert 
+                  assistance whenever needed.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="bg-gray-900/50 border border-gray-800 rounded-lg px-6">
+                <AccordionTrigger className="text-white hover:text-cyan-400">
+                  How does pricing compare to traditional AI services?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  While sovereign AI requires an initial investment, it eliminates recurring subscription fees and provides 
+                  better long-term value. You own the infrastructure and can scale without per-user or per-query costs. 
+                  Most organizations see ROI within 12-18 months through improved efficiency and eliminated vendor fees.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-gradient-to-t from-black via-gray-900 to-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 animate-gradient-x" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div {...fadeInUp} className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Ready to Build Your AI Empire?
+            </h2>
+            <p className="text-xl text-gray-300 mb-12">
+              Join the sovereign AI revolution. Take control of your organization's AI destiny today.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-cyan-500/25"
+              >
+                Schedule Strategy Call
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 px-8 py-6 text-lg"
+              >
+                Download Sovereignty Guide
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Enhanced Footer with updated messaging */}
+      <footer className="bg-black border-t border-gray-800">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <h3 className="text-2xl font-bold text-white mb-4">Covren Firm</h3>
+              <p className="text-gray-400 mb-4">
+                Building Sovereign AI Solutions for Forward-Thinking Organizations Worldwide
+              </p>
+              <div className="flex space-x-4">
+                <Badge variant="outline" className="border-cyan-500/50 text-cyan-400">
+                  <Lock className="w-3 h-3 mr-1" />
+                  SOC 2 Compliant
+                </Badge>
+                <Badge variant="outline" className="border-cyan-500/50 text-cyan-400">
+                  <Shield className="w-3 h-3 mr-1" />
+                  ISO 27001
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Solutions</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/solutions/sovereign-ai" className="hover:text-cyan-400 transition-colors">Sovereign AI Platform</Link></li>
+                <li><Link href="/solutions/custom-llm" className="hover:text-cyan-400 transition-colors">Custom LLM Development</Link></li>
+                <li><Link href="/solutions/ai-infrastructure" className="hover:text-cyan-400 transition-colors">AI Infrastructure</Link></li>
+                <li><Link href="/solutions/consulting" className="hover:text-cyan-400 transition-colors">Strategic Consulting</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/about" className="hover:text-cyan-400 transition-colors">About Us</Link></li>
+                <li><Link href="/manifesto" className="hover:text-cyan-400 transition-colors">AI Sovereignty Manifesto</Link></li>
+                <li><Link href="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link></li>
+                <li><Link href="/blog" className="hover:text-cyan-400 transition-colors">Blog</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p>&copy; {new Date().getFullYear()} Covren Firm LLC. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
