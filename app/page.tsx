@@ -226,10 +226,10 @@ export default function HomePage() {
         <div className="container">
           <div className="text-center mb-16 md:mb-20">
             <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
-              Our Technological Prowess
+              Our AI-Powered Solutions
             </h2>
             <p className="mt-4 text-lg text-muted-foreground md:text-xl max-w-3xl mx-auto">
-              Leveraging a cutting-edge arsenal and deep specializations to engineer the future of AI.
+              Leveraging cutting-edge AI and deep specializations to transform how organizations harness the power of intelligent technology.
             </p>
           </div>
 
