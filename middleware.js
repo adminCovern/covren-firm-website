@@ -1,30 +1,24 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
-  // Get the protocol from headers
-  const proto = request.headers.get('x-forwarded-proto')
-  const host = request.headers.get('host')
-  
-  // Force HTTPS in production
-  if (proto === 'http' && process.env.NODE_ENV === 'production') {
-    return NextResponse.redirect(`https://${host}${request.nextUrl.pathname}${request.nextUrl.search}`, 301)
-  }
-  
-  // Add security headers to all responses
   const response = NextResponse.next()
   
-  // Force upgrade all requests to HTTPS
+  // Force ALL resources to upgrade to HTTPS - no exceptions
   response.headers.set(
     'Content-Security-Policy',
     "upgrade-insecure-requests;"
   )
   
+  // Additional security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  
   return response
 }
 
+// Apply to EVERYTHING - including images, static files, etc.
 export const config = {
-  matcher: [
-    // Match all paths except static files and images
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: '/:path*',
 }
