@@ -160,7 +160,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Technologies We Command Section */}
+     {/* Technologies We Command Section */}
       <section ref={sectionRefs.technologies} id="technologies" className="py-24 bg-black">
         <div className="container mx-auto px-4">
           <motion.div {...fadeInUp} className="text-center mb-16">
@@ -178,70 +178,130 @@ export default function HomePage() {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center justify-items-center">
             {/* AI/ML Technologies */}
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">PyTorch</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" 
+                  alt="PyTorch" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">PyTorch</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">TensorFlow</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" 
+                  alt="TensorFlow" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">TensorFlow</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">HuggingFace</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" 
+                  alt="HuggingFace" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">HuggingFace</p>
             </div>
             
             {/* Cloud & Infrastructure */}
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">AWS</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg" 
+                  alt="AWS" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">AWS</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">Azure</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" 
+                  alt="Azure" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">Azure</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">Docker</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" 
+                  alt="Docker" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">Docker</p>
             </div>
             
             {/* Development Stack */}
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">Python</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" 
+                  alt="Python" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">Python</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">React</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" 
+                  alt="React" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">React</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">Node.js</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" 
+                  alt="Node.js" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">Node.js</p>
             </div>
             
             {/* Data & Security */}
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">PostgreSQL</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" 
+                  alt="PostgreSQL" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">PostgreSQL</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">MongoDB</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" 
+                  alt="MongoDB" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">MongoDB</p>
             </div>
             <div className="tech-logo-wrapper group">
-              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300">
-                <span className="text-white font-bold text-lg">Kubernetes</span>
+              <div className="w-24 h-24 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 group-hover:border-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <img 
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" 
+                  alt="Kubernetes" 
+                  className="w-full h-full object-contain"
+                />
               </div>
+              <p className="text-white text-sm mt-2 text-center opacity-80">Kubernetes</p>
             </div>
           </div>
         </div>
