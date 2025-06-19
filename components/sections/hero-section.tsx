@@ -1,104 +1,161 @@
-"use client"
-import { motion } from "framer-motion"
-import GlowingButton from "@/components/ui/glowing-button"
-import GlassCard from "@/components/ui/glass-card"
-import { Cpu, ShieldCheck, BarChartBig, Zap } from "lucide-react"
-import Link from "next/link"
-import Hero3DScene from "./hero-3d-scene"
+'use client'
 
-const heroCards = [
-  { title: "Custom AI Models", icon: Cpu, description: "Tailored intelligence for unique challenges." },
-  { title: "Sovereign Systems", icon: ShieldCheck, description: "Full control over your AI infrastructure." },
-  { title: "Data Supremacy", icon: BarChartBig, description: "Unlock insights that drive decisions." },
-]
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import Link from "next/link"
+import { ArrowRight, Zap, Shield, Brain, Globe } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 export default function HeroSection() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
+  }, [])
+
   return (
-    <section className="relative flex h-screen min-h-[850px] md:min-h-[900px] w-full flex-col items-center justify-center overflow-hidden pt-20 pb-10">
-      {/* The 3D scene replaces the static image background */}
-      <Hero3DScene />
-      
-      <div className="animated-gradient-hero-bg absolute inset-0 z-[-2]" />
-      
-      <div className="container relative z-10 flex flex-col items-center justify-center text-center px-4 flex-grow mt-[-40px] md:mt-[-60px]">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
-          className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] leading-tight"
-        >
-          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Pioneering Sovereign
-          </span>
-          <br />
-          <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-text-glow-primary">
-            Digital Intelligence
-          </span>
-        </motion.h1>
-        
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.5, ease: "easeOut" }}
-          className="mt-6 max-w-4xl text-lg text-foreground/90 sm:text-xl md:text-2xl tracking-wider"
-          style={{ textShadow: "0 2px 12px rgba(0, 0, 0, 0.7)" }}
-        >
-          Full-Stack AI Development | Custom Solutions | Revolutionary Products
-        </motion.p>
-        
-        <motion.p
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Animated background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.1),transparent_50%)]" />
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(0,212,255,0.15), transparent 40%)`,
+          }}
+        />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight 
+            }}
+            animate={{
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+            }}
+            transition={{
+              duration: Math.random() * 20 + 10,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-24">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.7, ease: "easeOut" }}
-          className="mt-4 text-lg text-blue-400 font-semibold animate-pulse"
+          transition={{ duration: 0.8 }}
+          className="text-center max-w-5xl mx-auto"
         >
-          Trusted by forward-thinking organizations across 5 continents
-        </motion.p>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.9, ease: "easeOut" }}
-          className="mt-10 md:mt-12 flex flex-col sm:flex-row gap-4 items-center"
-        >
-          <GlowingButton size="xl" asChild className="transform hover:scale-105 transition-all duration-300">
-            <Link href="#contact">
-              <Zap className="mr-2.5 h-5 w-5" />
-              Book Your AI Strategy Session
-            </Link>
-          </GlowingButton>
-          <span className="text-sm text-gray-400">Limited slots available</span>
-        </motion.div>
-        
-        <motion.div
-          className="mt-12 md:mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3 lg:mt-20 w-full max-w-4xl xl:max-w-5xl"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.2, delayChildren: 1.1 } },
-          }}
-        >
-          {heroCards.map((card) => (
+          {/* Main Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Badge className="mb-6 px-4 py-2 text-sm bg-cyan-500/10 text-cyan-400 border-cyan-500/50">
+              <Zap className="w-4 h-4 mr-2" />
+              Sovereign AI Solutions
+            </Badge>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+          >
+            Pioneering{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+              Sovereign Digital Intelligence
+            </span>
+          </motion.h1>
+
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl md:text-2xl text-gray-300 mb-12"
+          >
+            Full-Stack AI Development | Custom Solutions | Revolutionary Products
+          </motion.p>
+
+          {/* CTA Section with enhanced visibility */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col items-center gap-6"
+          >
+            {/* Primary CTA - Much larger and more prominent */}
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <Button
+                size="lg"
+                className="relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold px-12 py-8 text-xl shadow-2xl shadow-cyan-500/25 transition-all duration-300 hover:scale-105"
+                asChild
+              >
+                <Link href="/contact">
+                  Book Your AI Strategy Session
+                  <ArrowRight className="ml-3 h-6 w-6" />
+                </Link>
+              </Button>
+            </div>
+
+            {/* Limited Slots Badge - Much more prominent */}
             <motion.div
-              key={card.title}
-              className="w-full"
-              variants={{
-                hidden: { opacity: 0, y: 40, scale: 0.9 },
-                visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+              animate={{
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
               }}
             >
-              <GlassCard
-                className="flex h-full flex-col items-center text-center p-5 md:p-6 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300"
-                interactive={true}
-                glow={true}
-              >
-                <card.icon className="mb-3 h-8 w-8 md:h-9 md:w-9 text-primary" />
-                <h3 className="text-md md:text-lg font-semibold text-foreground">{card.title}</h3>
-                <p className="mt-1 text-xs md:text-sm text-muted-foreground">{card.description}</p>
-              </GlassCard>
+              <Badge className="px-6 py-3 text-lg bg-red-500/20 text-red-400 border-red-500/50 font-semibold">
+                <span className="animate-pulse mr-2">🔥</span>
+                Limited Slots Available - Book Now
+              </Badge>
             </motion.div>
-          ))}
+          </motion.div>
+
+          {/* Feature highlights */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            <div className="flex items-center justify-center gap-3 text-gray-400">
+              <Shield className="w-5 h-5 text-cyan-400" />
+              <span>100% Data Sovereignty</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 text-gray-400">
+              <Brain className="w-5 h-5 text-cyan-400" />
+              <span>Custom AI Models</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 text-gray-400">
+              <Globe className="w-5 h-5 text-cyan-400" />
+              <span>Global Deployment</span>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
