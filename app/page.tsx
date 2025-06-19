@@ -69,7 +69,25 @@ export default function HomePage() {
     const score = (answers.filter(a => a).length / answers.length) * 100
     setAssessmentScore(score)
   }
+  const handleAssessmentAnswer = (answer: boolean) => {
+    const newAnswers = [...assessmentAnswers, answer]
+    setAssessmentAnswers(newAnswers)
+    
+    if (currentQuestion < assessmentQuestions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1)
+    } else {
+      // Calculate score when all questions are answered
+      const score = (newAnswers.filter(a => a).length / newAnswers.length) * 100
+      setAssessmentScore(score)
+    }
+  }
 
+  const resetAssessment = () => {
+    setAssessmentAnswers([])
+    setCurrentQuestion(0)
+    setAssessmentScore(0)
+    setShowAssessment(false)
+  }
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection />
