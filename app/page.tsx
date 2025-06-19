@@ -359,12 +359,15 @@ export default function HomePage() {
                   <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-6">
                     "We don't just build AI systems. We build empires."
                   </p>
-                  <Button 
+                 <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-cyan-500/25"
+                    asChild
                   >
-                    Start Your Sovereignty Journey
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <Link href="/contact">
+                      Start Your Sovereignty Journey
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
                   </Button>
                 </div>
               </div>
