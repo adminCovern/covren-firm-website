@@ -21,7 +21,8 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState('')
   const [assessmentScore, setAssessmentScore] = useState(0)
   const [showAssessment, setShowAssessment] = useState(false)
-
+  const [assessmentAnswers, setAssessmentAnswers] = useState<boolean[]>([])
+  const [currentQuestion, setCurrentQuestion] = useState(0)
   // Create refs for sections
   const sectionRefs: SectionRefs = {
     impact: { current: null },
