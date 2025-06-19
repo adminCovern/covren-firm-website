@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Force standalone output to prevent static generation
+  output: 'standalone',
+  
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -15,6 +18,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "cdn.jsdelivr.net",
+      },
+      {
+        protocol: "https",
+        hostname: "huggingface.co",
       },
     ],
     unoptimized: true,
