@@ -140,7 +140,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-300">
-                  From concept to production-ready AI systems in just two months
+                  Tailored deployment schedules that match your project's complexity and requirements
                 </p>
               </CardContent>
             </GlassCard>
