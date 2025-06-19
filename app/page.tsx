@@ -546,38 +546,34 @@ export default function HomePage() {
                     >
                       <h3 className="text-2xl font-bold text-white mb-8">Quick Assessment</h3>
                       <div className="space-y-6">
-                        {assessmentQuestions.map((question, index) => (
-                          <div key={index} className="p-4 bg-gray-800/50 rounded-lg">
-                            <p className="text-white mb-3">{question}</p>
-                            <div className="flex gap-4">
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  const answers = new Array(5).fill(false)
-                                  answers[index] = true
-                                  if (index === 4) {
-                                    calculateAssessment(answers)
-                                  }
-                                }}
-                                className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
-                              >
-                                Yes
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  const answers = new Array(5).fill(false)
-                                  if (index === 4) {
-                                    calculateAssessment(answers)
-                                  }
-                                }}
-                                className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10"
-                              >
-                                No
-                              </Button>
-                            </div>
+                        <div className="p-6 bg-gray-800/50 rounded-lg">
+                          <p className="text-lg text-white mb-4">
+                            Question {currentQuestion + 1} of {assessmentQuestions.length}
+                          </p>
+                          <p className="text-xl text-white mb-6">{assessmentQuestions[currentQuestion]}</p>
+                          <div className="flex gap-4 justify-center">
+                            <Button
+                              onClick={() => handleAssessmentAnswer(true)}
+                              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-3"
+                            >
+                              Yes
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => handleAssessmentAnswer(false)}
+                              className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10 px-8 py-3"
+                            >
+                              No
+                            </Button>
                           </div>
-                        ))}
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full bg-gray-800 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-cyan-500 to-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((currentQuestion + 1) / assessmentQuestions.length) * 100}%` }}
+                          />
+                        </div>
                       </div>
                     </motion.div>
                   ) : (
@@ -625,13 +621,26 @@ export default function HomePage() {
                             : "Great! Your organization is well-positioned for AI sovereignty."}
                         </p>
                       </div>
-                      <Button
-                        size="lg"
-                        className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                      >
-                        Get Detailed Analysis
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Button>
+                      <div className="flex gap-4 justify-center">
+                        <Button
+                          size="lg"
+                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                          asChild
+                        >
+                          <Link href="/contact">
+                            Get Detailed Analysis
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Link>
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          onClick={resetAssessment}
+                          className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                        >
+                          Retake Assessment
+                        </Button>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
