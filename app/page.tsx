@@ -51,70 +51,74 @@ const impactMetrics = [
   }
 ]
 
-const assessmentQuestions = [
-  {
-    question: "How much does your organization currently spend on AI/ML services monthly?",
-    options: [
-      { text: "Less than $10,000", score: 1 },
-      { text: "$10,000 - $50,000", score: 2 },
-      { text: "$50,000 - $200,000", score: 3 },
-      { text: "Over $200,000", score: 4 }
-    ]
-  },
-  {
-    question: "What's your biggest AI challenge right now?",
-    options: [
-      { text: "Rising costs", score: 4 },
-      { text: "Vendor limitations", score: 3 },
-      { text: "Data privacy concerns", score: 4 },
-      { text: "Scaling difficulties", score: 2 }
-    ]
-  },
-  {
-    question: "How critical is data sovereignty to your organization?",
-    options: [
-      { text: "Nice to have", score: 1 },
-      { text: "Important", score: 2 },
-      { text: "Very important", score: 3 },
-      { text: "Mission critical", score: 4 }
-    ]
-  },
-  {
-    question: "When do you need a sovereign AI solution?",
-    options: [
-      { text: "Just exploring", score: 1 },
-      { text: "Within 12 months", score: 2 },
-      { text: "Within 6 months", score: 3 },
-      { text: "ASAP", score: 4 }
-    ]
-  }
-]
-
 export default function HomePage() {
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [showResults, setShowResults] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
+  const [assessmentScore, setAssessmentScore] = useState(0)
+  const [showAssessment, setShowAssessment] = useState(false)
+  const [assessmentAnswers, setAssessmentAnswers] = useState<boolean[]>([])
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-  const handleAnswer = (score: number) => {
-    const newAnswers = [...answers, score]
-    setAnswers(newAnswers)
+  // Create refs for sections
+  const sectionRefs: SectionRefs = {
+    impact: { current: null },
+    technologies: { current: null },
+    manifesto: { current: null },
+    comparison: { current: null },
+    assessment: { current: null },
+    faq: { current: null }
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 100
+      
+      Object.entries(sectionRefs).forEach(([key, ref]) => {
+        if (ref.current) {
+          const { offsetTop, offsetHeight } = ref.current
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(key)
+          }
+        }
+      })
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  }
+
+  const assessmentQuestions = [
+    "Do you have full control over your AI models and data?",
+    "Can you deploy AI solutions on your own infrastructure?",
+    "Are you confident in your AI security measures?",
+    "Do you have the capability to customize AI for your needs?",
+    "Is your organization prepared for AI regulations?"
+  ]
+
+  const handleAssessmentAnswer = (answer: boolean) => {
+    const newAnswers = [...assessmentAnswers, answer]
+    setAssessmentAnswers(newAnswers)
     
-    if (currentQuestion < assessmentQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+    if (currentQuestionIndex < assessmentQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
     } else {
-      setShowResults(true)
+      // Calculate score when all questions answered
+      const score = (newAnswers.filter(a => a).length / newAnswers.length) * 100
+      setAssessmentScore(score)
     }
   }
 
   const resetAssessment = () => {
-    setCurrentQuestion(0)
-    setAnswers([])
-    setShowResults(false)
+    setAssessmentAnswers([])
+    setCurrentQuestionIndex(0)
+    setAssessmentScore(0)
+    setShowAssessment(false)
   }
-
-  const totalScore = answers.reduce((sum, score) => sum + score, 0)
-  const maxScore = assessmentQuestions.length * 4
-  const readinessPercentage = Math.round((totalScore / maxScore) * 100)
 
   return (
     <main className="min-h-screen">
@@ -169,7 +173,7 @@ export default function HomePage() {
       </section>
 
       {/* The Covren Impact */}
-      <section id="impact" className="py-24 relative">
+      <section ref={sectionRefs.impact} id="impact" className="py-24 relative">
         <div className="absolute inset-0 bg-dot-pattern opacity-5" />
         <div className="container relative">
           <motion.div 
@@ -245,7 +249,7 @@ export default function HomePage() {
       </section>
 
       {/* Technologies We Command Section */}
-      <section id="technologies" className="py-24 relative overflow-hidden">
+      <section ref={sectionRefs.technologies} id="technologies" className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
         <div className="container relative">
           <motion.div 
@@ -406,7 +410,7 @@ export default function HomePage() {
       </section>
 
       {/* AI Sovereignty Manifesto */}
-      <section id="manifesto" className="py-24 relative overflow-hidden">
+      <section ref={sectionRefs.manifesto} id="manifesto" className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         <div className="container relative">
           <motion.div 
@@ -528,7 +532,7 @@ export default function HomePage() {
       </section>
 
       {/* Comparison Section */}
-      <section id="comparison" className="py-24 relative">
+      <section ref={sectionRefs.comparison} id="comparison" className="py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-primary/5" />
         <div className="container relative">
           <motion.div 
@@ -633,8 +637,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* AI Readiness Assessment */}
-      <section className="py-24 relative overflow-hidden">
+      {/* AI Readiness Assessment - WITH ORIGINAL YES/NO BOOLEAN SCORING */}
+      <section ref={sectionRefs.assessment} id="assessment" className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
         <div className="container relative">
           <motion.div 
@@ -647,7 +651,7 @@ export default function HomePage() {
               AI Sovereignty Readiness Assessment
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Discover if your organization is ready to break free from AI vendor dependency
+              Discover how ready your organization is for sovereign AI
             </p>
           </motion.div>
 
@@ -655,131 +659,159 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
             <GlassCard className="p-8">
-              {!showResults ? (
-                <>
-                  {/* Progress Bar */}
-                  <div className="mb-8">
-                    <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                      <span>Question {currentQuestion + 1} of {assessmentQuestions.length}</span>
-                      <span>{Math.round(((currentQuestion) / assessmentQuestions.length) * 100)}% Complete</span>
-                    </div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-gradient-to-r from-primary to-cyan-400"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${((currentQuestion) / assessmentQuestions.length) * 100}%` }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    </div>
-                  </div>
-
-                  <motion.div
-                    key={currentQuestion}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
+              {!showAssessment ? (
+                <div className="text-center">
+                  <Brain className="w-16 h-16 text-primary mx-auto mb-6" />
+                  <h3 className="text-2xl font-bold mb-4">
+                    Take the 2-Minute Assessment
+                  </h3>
+                  <p className="text-muted-foreground mb-8">
+                    Answer 5 quick questions to evaluate your organization's AI sovereignty readiness
+                  </p>
+                  <Button
+                    size="lg"
+                    onClick={() => setShowAssessment(true)}
+                    className="bg-gradient-to-r from-primary to-cyan-400 hover:opacity-90"
                   >
-                    <h3 className="text-2xl font-bold mb-6">
-                      {assessmentQuestions[currentQuestion].question}
-                    </h3>
-                    <div className="space-y-3">
-                      {assessmentQuestions[currentQuestion].options.map((option, index) => (
-                        <Button
-                          key={index}
-                          onClick={() => handleAnswer(option.score)}
-                          variant="outline"
-                          className="w-full justify-start text-left p-4 h-auto hover:bg-primary/10 hover:border-primary transition-all"
-                        >
-                          <span className="text-base">{option.text}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  </motion.div>
-                </>
+                    Start Assessment
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
               ) : (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-center"
-                >
-                  <div className="mb-8">
-                    <div className="relative w-48 h-48 mx-auto mb-6">
-                      <svg className="w-48 h-48 transform -rotate-90">
-                        <circle
-                          cx="96"
-                          cy="96"
-                          r="88"
-                          stroke="currentColor"
-                          strokeWidth="12"
-                          fill="none"
-                          className="text-secondary"
-                        />
-                        <motion.circle
-                          cx="96"
-                          cy="96"
-                          r="88"
-                          stroke="url(#gradient)"
-                          strokeWidth="12"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeDasharray={553}
-                          initial={{ strokeDashoffset: 553 }}
-                          animate={{ strokeDashoffset: 553 - (553 * readinessPercentage) / 100 }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                        />
-                        <defs>
-                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#8B5CF6" />
-                            <stop offset="100%" stopColor="#06B6D4" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div>
-                          <div className="text-4xl font-bold bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-                            {readinessPercentage}%
-                          </div>
-                          <div className="text-sm text-muted-foreground">Ready</div>
+                <AnimatePresence mode="wait">
+                  {assessmentScore === 0 && assessmentAnswers.length < assessmentQuestions.length ? (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                    >
+                      <h3 className="text-2xl font-bold mb-8">Quick Assessment</h3>
+                      
+                      {/* Progress indicator */}
+                      <div className="mb-8">
+                        <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                          <span>Question {currentQuestionIndex + 1} of {assessmentQuestions.length}</span>
+                          <span>{Math.round((currentQuestionIndex / assessmentQuestions.length) * 100)}% Complete</span>
+                        </div>
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-primary to-cyan-400"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(currentQuestionIndex / assessmentQuestions.length) * 100}%` }}
+                            transition={{ duration: 0.3 }}
+                          />
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <h3 className="text-2xl font-bold mb-4">
-                    {readinessPercentage >= 75 ? "You're Ready for AI Sovereignty!" :
-                     readinessPercentage >= 50 ? "You're on the Path to Sovereignty" :
-                     "Start Your Sovereignty Journey"}
-                  </h3>
-                  
-                  <p className="text-muted-foreground mb-8">
-                    {readinessPercentage >= 75 ? 
-                      "Your organization shows strong indicators for successful AI sovereignty implementation. The potential cost savings and strategic advantages are significant." :
-                     readinessPercentage >= 50 ? 
-                      "You have a solid foundation for AI sovereignty. With the right strategy and partner, you can achieve full independence from vendor lock-in." :
-                      "While you may not need full sovereignty today, understanding your options now will prepare you for future growth and prevent costly dependencies."}
-                  </p>
-
-                  <div className="space-y-4">
-                    <Button size="lg" className="w-full" asChild>
-                      <Link href="/contact">
-                        Get Your Custom Sovereignty Roadmap <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button 
-                      size="lg" 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={resetAssessment}
+                      <div className="p-6 bg-secondary/50 rounded-lg">
+                        <p className="text-xl mb-6">{assessmentQuestions[currentQuestionIndex]}</p>
+                        <div className="flex gap-4 justify-center">
+                          <Button
+                            onClick={() => handleAssessmentAnswer(true)}
+                            size="lg"
+                            className="bg-gradient-to-r from-primary to-cyan-400 hover:opacity-90"
+                          >
+                            Yes
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => handleAssessmentAnswer(false)}
+                            size="lg"
+                            className="border-muted-foreground/50 hover:bg-secondary"
+                          >
+                            No
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="text-center"
                     >
-                      Retake Assessment
-                    </Button>
-                  </div>
-                </motion.div>
+                      <div className="mb-8">
+                        <div className="relative w-48 h-48 mx-auto mb-6">
+                          <svg className="w-48 h-48 transform -rotate-90">
+                            <circle
+                              cx="96"
+                              cy="96"
+                              r="88"
+                              stroke="currentColor"
+                              strokeWidth="12"
+                              fill="none"
+                              className="text-secondary"
+                            />
+                            <motion.circle
+                              cx="96"
+                              cy="96"
+                              r="88"
+                              stroke="url(#gradient)"
+                              strokeWidth="12"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeDasharray={553}
+                              initial={{ strokeDashoffset: 553 }}
+                              animate={{ strokeDashoffset: 553 - (553 * assessmentScore) / 100 }}
+                              transition={{ duration: 1, ease: "easeOut" }}
+                            />
+                            <defs>
+                              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#8B5CF6" />
+                                <stop offset="100%" stopColor="#06B6D4" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div>
+                              <div className="text-4xl font-bold bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+                                {assessmentScore}%
+                              </div>
+                              <div className="text-sm text-muted-foreground">Ready</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <h3 className="text-2xl font-bold mb-4">
+                        {assessmentScore >= 80 ? "You're Ready for AI Sovereignty!" :
+                         assessmentScore >= 60 ? "Strong Foundation for Sovereignty" :
+                         assessmentScore >= 40 ? "Good Potential for Growth" :
+                         "Start Your Sovereignty Journey"}
+                      </h3>
+                      
+                      <p className="text-muted-foreground mb-8">
+                        {assessmentScore >= 80 ? 
+                          "Your organization shows excellent readiness for AI sovereignty implementation. You have the foundation in place to take control of your AI infrastructure." :
+                         assessmentScore >= 60 ? 
+                          "You have many of the key elements in place. With strategic planning, you can achieve full AI sovereignty and eliminate vendor dependencies." :
+                         assessmentScore >= 40 ?
+                          "While there's room for improvement, you have a solid starting point. We can help you build the capabilities needed for AI independence." :
+                          "Every journey starts with a single step. Understanding AI sovereignty now will prepare you for future growth and prevent costly vendor lock-in."}
+                      </p>
+
+                      <div className="space-y-4">
+                        <Button size="lg" className="w-full" asChild>
+                          <Link href="/contact">
+                            Get Your Custom Sovereignty Roadmap <ArrowRight className="ml-2 h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button 
+                          size="lg" 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={resetAssessment}
+                        >
+                          Retake Assessment
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
             </GlassCard>
           </motion.div>
@@ -787,7 +819,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 relative">
+      <section ref={sectionRefs.faq} id="faq" className="py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-primary/5" />
         <div className="container relative">
           <motion.div 
