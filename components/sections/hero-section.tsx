@@ -9,8 +9,12 @@ import { Badge } from "@/components/ui/badge"
 
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [windowSize, setWindowSize] = useState({ width: 1200, height: 800 })
 
   useEffect(() => {
+    // Set actual window size after mount
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight })
+    
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
@@ -38,12 +42,12 @@ export default function HeroSection() {
             key={i}
             className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
             initial={{ 
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight 
+              x: Math.random() * windowSize.width,
+              y: Math.random() * windowSize.height 
             }}
             animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * windowSize.width,
+              y: Math.random() * windowSize.height,
             }}
             transition={{
               duration: Math.random() * 20 + 10,
