@@ -136,7 +136,7 @@ export default function HomePage() {
             <GlassCard>
               <CardHeader>
                 <Rocket className="w-12 h-12 text-cyan-400 mb-4" />
-                <CardTitle className="text-2xl text-white">60-Day Deployment</CardTitle>
+               <CardTitle className="text-2xl text-white">Custom Timelines</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-300">
