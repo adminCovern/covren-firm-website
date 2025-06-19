@@ -17,12 +17,16 @@ type SectionRefs = {
   [key: string]: React.RefObject<HTMLElement>
 }
 
+// Force dynamic rendering to avoid window is not defined error
+export const dynamic = 'force-dynamic'
+
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState('')
   const [assessmentScore, setAssessmentScore] = useState(0)
   const [showAssessment, setShowAssessment] = useState(false)
   const [assessmentAnswers, setAssessmentAnswers] = useState<boolean[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
+  
   // Create refs for sections
   const sectionRefs: SectionRefs = {
     impact: { current: null },
@@ -69,6 +73,7 @@ export default function HomePage() {
     const score = (answers.filter(a => a).length / answers.length) * 100
     setAssessmentScore(score)
   }
+  
   const handleAssessmentAnswer = (answer: boolean) => {
     const newAnswers = [...assessmentAnswers, answer]
     setAssessmentAnswers(newAnswers)
@@ -88,6 +93,7 @@ export default function HomePage() {
     setAssessmentScore(0)
     setShowAssessment(false)
   }
+  
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection />
@@ -738,16 +744,22 @@ export default function HomePage() {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-cyan-500/25"
+                asChild
               >
-                Schedule Strategy Call
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <Link href="/contact">
+                  Schedule Strategy Call
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
                 className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 px-8 py-6 text-lg"
+                asChild
               >
-                Download Sovereignty Guide
+                <a href="/downloads/sovereign-ai-guide.pdf" download="Sovereign-AI-Guide-CovrenFirm.pdf">
+                  Download Sovereignty Guide
+                </a>
               </Button>
             </div>
           </motion.div>
