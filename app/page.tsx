@@ -147,15 +147,23 @@ export default function HomePage() {
           </div>
 
           <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-8 border border-cyan-500/30">
-            <blockquote className="text-center">
-              <p className="text-2xl text-white mb-4 italic">
-                "Covren transformed our approach to AI. We now have complete control over our models and data, 
-                giving us the sovereignty we need to innovate without constraints."
-              </p>
-              <footer className="text-gray-400">
-                — Leading Technology Executive
-              </footer>
-            </blockquote>
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-white mb-6">Why Organizations Choose Sovereign AI</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-cyan-400 mb-2">100%</div>
+                  <p className="text-gray-300">Data Control & Ownership</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-cyan-400 mb-2">Zero</div>
+                  <p className="text-gray-300">Vendor Lock-in Risk</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-cyan-400 mb-2">∞</div>
+                  <p className="text-gray-300">Scalability Potential</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
