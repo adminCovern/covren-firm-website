@@ -8,7 +8,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Sphere, MeshDistortMaterial, Float, Stars } from '@react-three/drei'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Zap, Shield, Users, ChevronDown, Brain, Lock, Rocket, Globe, Award, TrendingUp, CheckCircle2, XCircle, Star, Check, X, ExternalLink, Download, FileText, ChevronRight, Server, Cpu, HardDrive, Activity } from "lucide-react"
+import { ArrowRight, Zap, Shield, Users, ChevronDown, Brain, Lock, Rocket, Globe, Award, TrendingUp, CheckCircle2, XCircle, Star, Check, X, ExternalLink, Download, FileText, ChevronRight, Server, Cpu, HardDrive, Activity, AlertCircle, Code, FileCode, Database, Cloud } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import HeroSection from '@/components/sections/hero-section'
 import GlassCard from "@/components/ui/glass-card"
@@ -53,29 +53,69 @@ function InfrastructureMetric({ label, value, suffix, icon, color }: {
   }, [numericValue])
 
   const colorClasses = {
-    purple: 'from-purple-500/20 to-purple-600/20 border-purple-500/30 text-purple-400',
-    blue: 'from-blue-500/20 to-blue-600/20 border-blue-500/30 text-blue-400',
-    cyan: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30 text-cyan-400',
-    green: 'from-green-500/20 to-green-600/20 border-green-500/30 text-green-400'
+    purple: 'from-purple-500/20 to-purple-600/10 border-purple-500/20 hover:border-purple-500/40',
+    blue: 'from-blue-500/20 to-blue-600/10 border-blue-500/20 hover:border-blue-500/40',
+    cyan: 'from-cyan-500/20 to-cyan-600/10 border-cyan-500/20 hover:border-cyan-500/40',
+    green: 'from-green-500/20 to-green-600/10 border-green-500/20 hover:border-green-500/40'
+  }
+
+  const iconColors = {
+    purple: 'text-purple-400',
+    blue: 'text-blue-400',
+    cyan: 'text-cyan-400',
+    green: 'text-green-400'
   }
 
   return (
     <motion.div
       whileHover={{ scale: 1.05, y: -5 }}
-      className={`bg-gradient-to-br ${colorClasses[color]} backdrop-blur-lg rounded-xl p-6 border transition-all duration-300`}
+      className={`relative bg-gradient-to-br ${colorClasses[color]} backdrop-blur-xl rounded-2xl p-8 border transition-all duration-300 overflow-hidden group`}
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className={colorClasses[color]}>{icon}</div>
-        <motion.div 
-          className="text-3xl font-bold"
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ repeat: Infinity, duration: 3 }}
-        >
-          {displayValue.toFixed(value.includes('.') ? 1 : 0)}
-          <span className="text-xl text-gray-400">{suffix}</span>
-        </motion.div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="relative z-10">
+        <div className={`${iconColors[color]} mb-4`}>{icon}</div>
+        <div className="mb-2">
+          <motion.span 
+            className="text-5xl font-bold text-white"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ repeat: Infinity, duration: 3 }}
+          >
+            {displayValue.toFixed(value.includes('.') ? 1 : 0)}
+          </motion.span>
+          <span className="text-2xl text-gray-400 ml-1">{suffix}</span>
+        </div>
+        <p className="text-gray-400 text-sm uppercase tracking-wider">{label}</p>
       </div>
-      <p className="text-gray-400 text-sm">{label}</p>
+    </motion.div>
+  )
+}
+
+// Service Card Component
+function ServiceCard({ title, icon, description, cta, href = "/contact", urgent = false }: {
+  title: string
+  icon: React.ReactNode
+  description: string
+  cta: string
+  href?: string
+  urgent?: boolean
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -5 }}
+      className="h-full"
+    >
+      <GlassCard className={`p-8 h-full flex flex-col ${urgent ? 'border-red-500/30 bg-red-500/5' : ''}`}>
+        <div className={`mb-4 ${urgent ? 'text-red-400' : 'text-primary'}`}>
+          {icon}
+        </div>
+        <h3 className="text-2xl font-bold mb-3">{title}</h3>
+        <p className="text-muted-foreground mb-6 flex-grow">{description}</p>
+        <Button variant={urgent ? 'destructive' : 'default'} className="w-full" asChild>
+          <Link href={href}>
+            {cta} <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
+      </GlassCard>
     </motion.div>
   )
 }
@@ -149,11 +189,12 @@ export default function HomePage() {
   const sectionRefs: SectionRefs = {
     impact: { current: null },
     infrastructure: { current: null },
+    apiCrisis: { current: null },
+    services: { current: null },
     technologies: { current: null },
     manifesto: { current: null },
     demo: { current: null },
     comparison: { current: null },
-    pricing: { current: null },
     assessment: { current: null },
     faq: { current: null }
   }
@@ -289,7 +330,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Infrastructure Powerhouse Section */}
+      {/* Infrastructure Powerhouse Section - PREMIUM VERSION */}
       <section ref={sectionRefs.infrastructure} id="infrastructure" className="py-24 relative overflow-hidden bg-black">
         <AnimatedBackground />
         
@@ -300,57 +341,97 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-                4 GH200 Superchips
-              </span>
-            </h2>
-            <p className="text-2xl md:text-3xl text-gray-300 mb-4">
-              288 vCPUs • 1.7TB Unified Memory • Zero Dependencies
+            <motion.h2 
+              className="text-6xl md:text-8xl font-bold mb-6"
+              animate={{ 
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{ duration: 5, repeat: Infinity }}
+              style={{
+                backgroundImage: "linear-gradient(to right, #8B5CF6, #06B6D4, #8B5CF6)",
+                backgroundSize: "200% 100%",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              4 GH200 Superchips
+            </motion.h2>
+            <p className="text-3xl md:text-4xl text-white font-light mb-4">
+              Your Escape from API Surveillance
             </p>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              While others wait in GPU queues, we built our own AI nation
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              While OpenAI logs every API call by court order, we offer complete data sovereignty
             </p>
           </motion.div>
 
-          {/* Live Infrastructure Metrics */}
-          <div className="grid md:grid-cols-4 gap-6 mb-16">
-            <InfrastructureMetric
-              label="Active GPUs"
-              value="4"
-              suffix="/4"
-              icon={<Server className="w-5 h-5" />}
-              color="purple"
-            />
-            <InfrastructureMetric
-              label="Memory Available"
-              value="1.7"
-              suffix="TB"
-              icon={<Cpu className="w-5 h-5" />}
-              color="blue"
-            />
-            <InfrastructureMetric
-              label="Processing Power"
-              value="288"
-              suffix="vCPUs"
-              icon={<HardDrive className="w-5 h-5" />}
-              color="cyan"
-            />
-            <InfrastructureMetric
-              label="Uptime"
-              value="99.99"
-              suffix="%"
-              icon={<Activity className="w-5 h-5" />}
-              color="green"
-            />
+          {/* Premium Infrastructure Metrics */}
+          <div className="relative mb-16">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 blur-3xl" />
+            <div className="relative grid md:grid-cols-4 gap-6">
+              <InfrastructureMetric
+                label="Active GPUs"
+                value="4"
+                suffix="/4"
+                icon={<Server className="w-8 h-8" />}
+                color="purple"
+              />
+              <InfrastructureMetric
+                label="Memory Available"
+                value="1.7"
+                suffix="TB"
+                icon={<Cpu className="w-8 h-8" />}
+                color="blue"
+              />
+              <InfrastructureMetric
+                label="Processing Power"
+                value="288"
+                suffix="vCPUs"
+                icon={<HardDrive className="w-8 h-8" />}
+                color="cyan"
+              />
+              <InfrastructureMetric
+                label="Uptime"
+                value="99.99"
+                suffix="%"
+                icon={<Activity className="w-8 h-8" />}
+                color="green"
+              />
+            </div>
           </div>
+
+          {/* Critical Alert Banner */}
+          <motion.div 
+            className="mb-12 p-6 bg-red-500/10 border border-red-500/30 rounded-2xl backdrop-blur-xl"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-red-500">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+              <div className="flex-grow">
+                <h3 className="text-xl font-bold text-red-400">OpenAI Court Order Alert</h3>
+                <p className="text-gray-300">
+                  OpenAI is now legally required to log all API sessions and user data. 
+                  Law firms and enterprises using OpenAI APIs are exposing privileged information.
+                </p>
+              </div>
+              <Button variant="destructive" asChild>
+                <Link href="#api-crisis">
+                  Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </motion.div>
 
           {/* Infrastructure Comparison */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10"
+            className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10"
           >
             <h3 className="text-2xl font-bold mb-8 text-center">
               Infrastructure Superiority
@@ -377,12 +458,12 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-green-500" />
-                    <span>Unlimited concurrent models</span>
+                    <span>Zero external logging</span>
                   </li>
                 </ul>
               </div>
               <div>
-                <h4 className="text-xl font-semibold mb-4 text-red-400">Cloud Providers</h4>
+                <h4 className="text-xl font-semibold mb-4 text-red-400">Cloud/API Providers</h4>
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3">
                     <X className="w-5 h-5 text-red-500" />
@@ -402,10 +483,152 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-center gap-3">
                     <X className="w-5 h-5 text-red-500" />
-                    <span>Queue for GPU access</span>
+                    <span>Court-ordered logging (OpenAI)</span>
                   </li>
                 </ul>
               </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* API Liberation Services - NEW SECTION */}
+      <section ref={sectionRefs.apiCrisis} id="api-crisis" className="py-24 relative bg-gradient-to-b from-black to-gray-900">
+        <div className="container">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-6xl font-bold mb-6">
+              <span className="text-red-400">Escape</span> API Surveillance.{" "}
+              <span className="text-green-400">Embrace</span> Sovereignty.
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Your confidential data is being logged. Every prompt. Every response. 
+              We help you break free in weeks, not months.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <GlassCard className="p-8 border-red-500/20 bg-red-500/5 h-full">
+                <h3 className="text-2xl font-bold mb-4 text-red-400">The API Crisis</h3>
+                <ul className="space-y-3 text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">•</span>
+                    <span>OpenAI logs all API data by court order</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">•</span>
+                    <span>Your proprietary data stored indefinitely</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">•</span>
+                    <span>Client confidentiality at risk</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">•</span>
+                    <span>Compliance nightmares for law firms</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">•</span>
+                    <span>Zero control over data retention</span>
+                  </li>
+                </ul>
+              </GlassCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <GlassCard className="p-8 border-yellow-500/20 bg-yellow-500/5 h-full">
+                <h3 className="text-2xl font-bold mb-4 text-yellow-400">Migration Path</h3>
+                <ul className="space-y-3 text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Full API audit & risk assessment</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Custom sovereign infrastructure</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Seamless migration strategy</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Zero downtime transition</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Complete data repatriation</span>
+                  </li>
+                </ul>
+              </GlassCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              <GlassCard className="p-8 border-green-500/20 bg-green-500/5 h-full">
+                <h3 className="text-2xl font-bold mb-4 text-green-400">True Sovereignty</h3>
+                <ul className="space-y-3 text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>Your infrastructure, your rules</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>No external logging ever</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>Complete compliance control</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>Privileged data stays privileged</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>Audit trails you control</span>
+                  </li>
+                </ul>
+              </GlassCard>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="inline-block p-8 bg-gradient-to-r from-red-600/20 to-orange-600/20 rounded-2xl border border-red-500/30 backdrop-blur-xl">
+              <p className="text-3xl font-bold text-red-400 mb-4">
+                Time is Running Out
+              </p>
+              <p className="text-xl text-gray-300 mb-6 max-w-2xl">
+                Every API call is another data point logged forever. 
+                Law firms and enterprises can't afford to wait.
+              </p>
+              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
+                Start Your API Exodus Now <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </motion.div>
         </div>
@@ -487,6 +710,113 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Covren Services Overview - NEW SECTION */}
+      <section ref={sectionRefs.services} id="services" className="py-24 relative bg-gradient-to-b from-background to-primary/5">
+        <div className="container">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+              Complete Sovereignty Solutions
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              From API migration to full-stack development, we deliver independence
+            </p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <ServiceCard
+                title="API Migration Services"
+                icon={<Shield className="w-8 h-8" />}
+                description="Escape surveillance. Migrate from OpenAI and other logged APIs to sovereign infrastructure."
+                cta="Break Free from APIs"
+                urgent={true}
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <ServiceCard
+                title="SOVREN AI Platform"
+                icon={<Brain className="w-8 h-8" />}
+                description="Our flagship AI platform. Complete sovereignty, unlimited scale, zero surveillance."
+                cta="Explore SOVREN AI"
+                href="/sovren-ai"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              <ServiceCard
+                title="Infrastructure Design"
+                icon={<Server className="w-8 h-8" />}
+                description="Custom sovereign infrastructure tailored to your compliance and security needs."
+                cta="Design Your Stack"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <ServiceCard
+                title="Compliance Solutions"
+                icon={<Lock className="w-8 h-8" />}
+                description="Navigate regulations while maintaining complete data control and audit trails."
+                cta="Ensure Compliance"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+            >
+              <ServiceCard
+                title="Migration Consulting"
+                icon={<Rocket className="w-8 h-8" />}
+                description="Strategic guidance for transitioning from vendor dependence to sovereignty."
+                cta="Plan Your Migration"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+            >
+              <ServiceCard
+                title="Custom Development"
+                icon={<FileCode className="w-8 h-8" />}
+                description="Full-stack sovereign solutions built for your unique requirements."
+                cta="Build Sovereign"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Technologies We Command Section */}
       <section ref={sectionRefs.technologies} id="technologies" className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
@@ -498,10 +828,10 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-              Enterprise-Grade Technology Stack
+              Technologies We Command
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We leverage cutting-edge open-source technologies to build your sovereign AI infrastructure
+              Building sovereign AI solutions with industry-leading technologies and custom implementations
             </p>
           </motion.div>
 
@@ -687,6 +1017,10 @@ export default function HomePage() {
                         <span className="text-sm">Monthly Cost</span>
                         <span className="text-red-400">$12,847 (over limit)</span>
                       </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Data Logging</span>
+                        <span className="text-red-400">All sessions logged</span>
+                      </div>
                     </div>
                   </div>
                   <Button 
@@ -714,7 +1048,11 @@ export default function HomePage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Monthly Cost</span>
-                        <span className="text-green-400">Fixed: $297</span>
+                        <span className="text-green-400">Fixed: See Pricing</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Data Logging</span>
+                        <span className="text-green-400">Never - Full Sovereignty</span>
                       </div>
                     </div>
                   </div>
@@ -800,7 +1138,7 @@ export default function HomePage() {
               <h3 className="text-3xl font-bold mb-6">Your AI Should Serve You, Not Vice Versa</h3>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Every API call to a third-party AI service is a vote for dependency. Every model locked behind a paywall is innovation held hostage.
+                  Every API call to a third-party AI service is a vote for dependency. Every model locked behind a paywall is innovation held hostage. Every session logged by court order is sovereignty surrendered.
                 </p>
                 <p>
                   We believe in a different future—one where your AI infrastructure is as sovereign as your business itself. Where your models improve with your data. Where your costs decrease as you scale.
@@ -949,7 +1287,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Becomes a strategic asset over time</span>
+                      <span>No court-ordered logging ever</span>
                     </li>
                   </ul>
                 </div>
@@ -981,7 +1319,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                      <span>Perpetual expense with no ownership</span>
+                      <span>Sessions logged by court order (OpenAI)</span>
                     </li>
                   </ul>
                 </div>
@@ -1001,134 +1339,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section ref={sectionRefs.pricing} id="pricing" className="py-24 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
-        <div className="container relative">
+      {/* SOVREN AI CTA - Instead of Pricing */}
+      <section className="py-24 relative bg-gradient-to-b from-primary/5 to-background">
+        <div className="container">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center max-w-4xl mx-auto"
           >
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-              Simple, Transparent Pricing
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+              Discover SOVREN AI
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              True sovereignty at prices that make sense. No limits, no surprises.
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Our flagship sovereignty platform. No APIs. No surveillance. No limits.
             </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-            {/* Beta Tier */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <GlassCard className="p-8 h-full flex flex-col">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-bold mb-2">SOVREN AI Beta</h3>
-                  <p className="text-muted-foreground">Full platform access with community support</p>
-                </div>
-                <div className="mb-6">
-                  <span className="text-5xl font-bold">$297</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8 flex-grow">
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Full sovereignty features</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Unlimited processing</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Community support</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Documentation & tutorials</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Beta feedback priority</span>
-                  </li>
-                </ul>
-                <Button size="lg" variant="outline" className="w-full" asChild>
-                  <Link href="/contact">
-                    Get Started
-                  </Link>
-                </Button>
-              </GlassCard>
-            </motion.div>
-
-            {/* Beta Plus Tier */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
-              <GlassCard className="p-8 h-full flex flex-col border-primary/50 relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold">
-                  RECOMMENDED
-                </div>
-                <div className="mb-4">
-                  <h3 className="text-2xl font-bold mb-2">SOVREN AI Beta Plus</h3>
-                  <p className="text-muted-foreground">Everything in Beta plus priority support</p>
-                </div>
-                <div className="mb-6">
-                  <span className="text-5xl font-bold">$597</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8 flex-grow">
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Everything in Beta</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Priority email/chat support</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Custom onboarding session</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Monthly office hours</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                    <span>Direct founder access</span>
-                  </li>
-                </ul>
-                <Button size="lg" className="w-full bg-gradient-to-r from-primary to-cyan-500" asChild>
-                  <Link href="/contact">
-                    Get Started
-                  </Link>
-                </Button>
-              </GlassCard>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <p className="text-muted-foreground mb-4">
-              Need more? Let&apos;s discuss custom solutions for your organization.
-            </p>
-            <Button variant="outline" asChild>
-              <Link href="/contact">
-                Contact for Enterprise Pricing <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-cyan-500 hover:opacity-90" asChild>
+                <Link href="/sovren-ai">
+                  Explore SOVREN AI <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/contact">
+                  Discuss Your Needs
+                </Link>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -1363,13 +1600,13 @@ export default function HomePage() {
                 <summary className="cursor-pointer list-none">
                   <GlassCard className="p-6 hover:bg-primary/5 transition-colors">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-semibold">How long does implementation take?</h3>
+                      <h3 className="text-xl font-semibold">How do we migrate from OpenAI and other APIs?</h3>
                       <ChevronRight className="h-5 w-5 text-primary transition-transform group-open:rotate-90" />
                     </div>
                   </GlassCard>
                 </summary>
                 <div className="mt-4 px-6 text-muted-foreground">
-                  <p>Implementation timelines are customized to your needs. Simple deployments can be operational in 4-6 weeks, while comprehensive enterprise implementations typically take 3-6 months. We work with your timeline and can phase the rollout to deliver value quickly while building toward full sovereignty.</p>
+                  <p>Our API migration service includes a complete audit of your current API usage, risk assessment, and a phased migration plan. We build sovereign infrastructure tailored to your needs, ensure zero downtime during transition, and handle complete data repatriation. Most migrations complete in 4-8 weeks.</p>
                 </div>
               </details>
             </motion.div>
@@ -1426,13 +1663,13 @@ export default function HomePage() {
                 <summary className="cursor-pointer list-none">
                   <GlassCard className="p-6 hover:bg-primary/5 transition-colors">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-semibold">Can we still use cloud services?</h3>
+                      <h3 className="text-xl font-semibold">What about the OpenAI court order?</h3>
                       <ChevronRight className="h-5 w-5 text-primary transition-transform group-open:rotate-90" />
                     </div>
                   </GlassCard>
                 </summary>
                 <div className="mt-4 px-6 text-muted-foreground">
-                  <p>Absolutely. AI sovereignty doesn&apos;t mean avoiding the cloud—it means owning your AI assets. You can deploy on your preferred cloud provider, on-premise, or hybrid. The key is that you own and control everything, with no vendor lock-in or usage restrictions.</p>
+                  <p>OpenAI is now legally required to log all API sessions and user data. This means every prompt, every response, and all metadata is stored indefinitely. For law firms, healthcare providers, and enterprises handling sensitive data, this is a critical compliance risk. Our sovereign infrastructure ensures your data never leaves your control—no logging, no surveillance, complete privacy.</p>
                 </div>
               </details>
             </motion.div>
