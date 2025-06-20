@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 
 // Define section refs type
 type SectionRefs = {
-  [key: string]: React.RefObject<HTMLElement>
+  [key: string]: React.RefObject<HTMLElement | null>
 }
 
 // Force dynamic rendering to avoid window is not defined error
@@ -187,16 +187,16 @@ export default function HomePage() {
 
   // Create refs for sections
   const sectionRefs: SectionRefs = {
-    impact: { current: null },
-    infrastructure: { current: null },
-    apiCrisis: { current: null },
-    services: { current: null },
-    technologies: { current: null },
-    manifesto: { current: null },
-    demo: { current: null },
-    comparison: { current: null },
-    assessment: { current: null },
-    faq: { current: null }
+    impact: useRef<HTMLElement | null>(null),
+    infrastructure: useRef<HTMLElement | null>(null),
+    apiCrisis: useRef<HTMLElement | null>(null),
+    services: useRef<HTMLElement | null>(null),
+    technologies: useRef<HTMLElement | null>(null),
+    manifesto: useRef<HTMLElement | null>(null),
+    demo: useRef<HTMLElement | null>(null),
+    comparison: useRef<HTMLElement | null>(null),
+    assessment: useRef<HTMLElement | null>(null),
+    faq: useRef<HTMLElement | null>(null)
   }
 
   useEffect(() => {
