@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from "next/link"
 import Image from "next/image"
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Sphere, MeshDistortMaterial, Float, Stars } from '@react-three/drei'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Zap, Shield, Users, ChevronDown, Brain, Lock, Rocket, Globe, Award, TrendingUp, CheckCircle2, XCircle, Star, Check, X, ExternalLink, Download, FileText, ChevronRight } from "lucide-react"
+import { ArrowRight, Zap, Shield, Users, ChevronDown, Brain, Lock, Rocket, Globe, Award, TrendingUp, CheckCircle2, XCircle, Star, Check, X, ExternalLink, Download, FileText, ChevronRight, Server, Cpu, HardDrive, Activity } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import HeroSection from '@/components/sections/hero-section'
 import GlassCard from "@/components/ui/glass-card"
@@ -20,6 +22,89 @@ type SectionRefs = {
 
 // Force dynamic rendering to avoid window is not defined error
 export const dynamic = 'force-dynamic'
+
+// Infrastructure metric component
+function InfrastructureMetric({ label, value, suffix, icon, color }: {
+  label: string
+  value: string
+  suffix: string
+  icon: React.ReactNode
+  color: 'purple' | 'blue' | 'cyan' | 'green'
+}) {
+  const [displayValue, setDisplayValue] = useState(0)
+  const numericValue = parseFloat(value)
+
+  useEffect(() => {
+    const duration = 2000
+    const steps = 60
+    const increment = numericValue / steps
+    let current = 0
+
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= numericValue) {
+        current = numericValue
+        clearInterval(timer)
+      }
+      setDisplayValue(current)
+    }, duration / steps)
+
+    return () => clearInterval(timer)
+  }, [numericValue])
+
+  const colorClasses = {
+    purple: 'from-purple-500/20 to-purple-600/20 border-purple-500/30 text-purple-400',
+    blue: 'from-blue-500/20 to-blue-600/20 border-blue-500/30 text-blue-400',
+    cyan: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30 text-cyan-400',
+    green: 'from-green-500/20 to-green-600/20 border-green-500/30 text-green-400'
+  }
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05, y: -5 }}
+      className={`bg-gradient-to-br ${colorClasses[color]} backdrop-blur-lg rounded-xl p-6 border transition-all duration-300`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className={colorClasses[color]}>{icon}</div>
+        <motion.div 
+          className="text-3xl font-bold"
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+        >
+          {displayValue.toFixed(value.includes('.') ? 1 : 0)}
+          <span className="text-xl text-gray-400">{suffix}</span>
+        </motion.div>
+      </div>
+      <p className="text-gray-400 text-sm">{label}</p>
+    </motion.div>
+  )
+}
+
+// Animated 3D background component
+function AnimatedBackground() {
+  return (
+    <div className="absolute inset-0 z-0">
+      <Canvas camera={{ position: [0, 0, 5] }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} />
+        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+          <Sphere args={[1, 64, 64]} scale={2.5}>
+            <MeshDistortMaterial
+              color="#8B5CF6"
+              attach="material"
+              distort={0.4}
+              speed={2}
+              roughness={0.2}
+              metalness={0.8}
+            />
+          </Sphere>
+        </Float>
+        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+      </Canvas>
+    </div>
+  )
+}
 
 const stats = [
   { value: "87%", label: "Reduction in AI Costs" },
@@ -57,13 +142,18 @@ export default function HomePage() {
   const [showAssessment, setShowAssessment] = useState(false)
   const [assessmentAnswers, setAssessmentAnswers] = useState<boolean[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [demoProcessing, setDemoProcessing] = useState(false)
+  const [demoResults, setDemoResults] = useState<any>(null)
 
   // Create refs for sections
   const sectionRefs: SectionRefs = {
     impact: { current: null },
+    infrastructure: { current: null },
     technologies: { current: null },
     manifesto: { current: null },
+    demo: { current: null },
     comparison: { current: null },
+    pricing: { current: null },
     assessment: { current: null },
     faq: { current: null }
   }
@@ -120,6 +210,33 @@ export default function HomePage() {
     setShowAssessment(false)
   }
 
+  const simulateDemo = async (isVendor: boolean) => {
+    setDemoProcessing(true)
+    
+    if (isVendor) {
+      // Simulate vendor AI delays and failures
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      setDemoResults({
+        type: 'vendor',
+        status: 'Rate Limited',
+        message: 'API quota exceeded. Please try again in 24 hours.',
+        cost: '$47.82'
+      })
+    } else {
+      // Simulate SOVREN AI instant processing
+      await new Promise(resolve => setTimeout(resolve, 300))
+      setDemoResults({
+        type: 'sovren',
+        status: 'Processed',
+        message: 'Analysis complete. Full sovereignty maintained.',
+        latency: '3ms',
+        cost: 'Included in subscription'
+      })
+    }
+    
+    setDemoProcessing(false)
+  }
+
   return (
     <main className="min-h-screen">
       <HeroSection />
@@ -169,6 +286,128 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Infrastructure Powerhouse Section */}
+      <section ref={sectionRefs.infrastructure} id="infrastructure" className="py-24 relative overflow-hidden bg-black">
+        <AnimatedBackground />
+        
+        <div className="container relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-7xl font-bold mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+                4 GH200 Superchips
+              </span>
+            </h2>
+            <p className="text-2xl md:text-3xl text-gray-300 mb-4">
+              288 vCPUs • 1.7TB Unified Memory • Zero Dependencies
+            </p>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              While others wait in GPU queues, we built our own AI nation
+            </p>
+          </motion.div>
+
+          {/* Live Infrastructure Metrics */}
+          <div className="grid md:grid-cols-4 gap-6 mb-16">
+            <InfrastructureMetric
+              label="Active GPUs"
+              value="4"
+              suffix="/4"
+              icon={<Server className="w-5 h-5" />}
+              color="purple"
+            />
+            <InfrastructureMetric
+              label="Memory Available"
+              value="1.7"
+              suffix="TB"
+              icon={<Cpu className="w-5 h-5" />}
+              color="blue"
+            />
+            <InfrastructureMetric
+              label="Processing Power"
+              value="288"
+              suffix="vCPUs"
+              icon={<HardDrive className="w-5 h-5" />}
+              color="cyan"
+            />
+            <InfrastructureMetric
+              label="Uptime"
+              value="99.99"
+              suffix="%"
+              icon={<Activity className="w-5 h-5" />}
+              color="green"
+            />
+          </div>
+
+          {/* Infrastructure Comparison */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10"
+          >
+            <h3 className="text-2xl font-bold mb-8 text-center">
+              Infrastructure Superiority
+            </h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="text-xl font-semibold mb-4 text-purple-400">Our Infrastructure</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>3.6 TB/s NVLink-C2C bandwidth</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>384 GB HBM3 GPU memory</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>16 TB NVMe SSD storage</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>&lt;3ms inference latency</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>Unlimited concurrent models</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-xl font-semibold mb-4 text-red-400">Cloud Providers</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>Limited PCIe bandwidth</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>Shared GPU resources</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>Metered storage costs</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>200ms+ average latency</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>Queue for GPU access</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -409,6 +648,131 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Sovereignty Demo Section */}
+      <section ref={sectionRefs.demo} id="demo" className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-purple-900/5 to-background" />
+        <div className="container relative">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+              Experience Sovereignty in Action
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              See the difference between vendor dependence and true AI sovereignty
+            </p>
+          </motion.div>
+
+          <div className="max-w-6xl mx-auto">
+            <GlassCard className="p-8">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                {/* Vendor AI Simulation */}
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold text-red-400">Vendor AI</h3>
+                  <div className="bg-red-500/10 rounded-lg p-4 border border-red-500/20">
+                    <p className="text-sm text-red-400 mb-2">API Status</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Rate Limit</span>
+                        <span className="text-red-400">429 - Too Many Requests</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Queue Position</span>
+                        <span className="text-yellow-400">47th in line</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Monthly Cost</span>
+                        <span className="text-red-400">$12,847 (over limit)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => simulateDemo(true)}
+                    disabled={demoProcessing}
+                    className="w-full bg-red-600 hover:bg-red-700"
+                  >
+                    {demoProcessing ? 'Waiting in Queue...' : 'Try Vendor AI (Slow)'}
+                  </Button>
+                </div>
+
+                {/* SOVREN AI Simulation */}
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold text-green-400">SOVREN AI</h3>
+                  <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
+                    <p className="text-sm text-green-400 mb-2">Infrastructure Status</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Processing Power</span>
+                        <span className="text-green-400">100% Available</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Latency</span>
+                        <span className="text-green-400">3ms</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Monthly Cost</span>
+                        <span className="text-green-400">Fixed: $297</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => simulateDemo(false)}
+                    disabled={demoProcessing}
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
+                  >
+                    {demoProcessing ? 'Processing...' : 'Process with SOVREN AI (Instant)'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Demo Results */}
+              <AnimatePresence>
+                {demoResults && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`p-6 rounded-lg ${
+                      demoResults.type === 'vendor' 
+                        ? 'bg-red-500/10 border border-red-500/20' 
+                        : 'bg-green-500/10 border border-green-500/20'
+                    }`}
+                  >
+                    <h4 className={`text-lg font-semibold mb-2 ${
+                      demoResults.type === 'vendor' ? 'text-red-400' : 'text-green-400'
+                    }`}>
+                      {demoResults.status}
+                    </h4>
+                    <p className="text-muted-foreground mb-2">{demoResults.message}</p>
+                    <div className="flex items-center gap-4 text-sm">
+                      {demoResults.latency && (
+                        <span>Latency: <strong className="text-green-400">{demoResults.latency}</strong></span>
+                      )}
+                      <span>Cost: <strong className={demoResults.type === 'vendor' ? 'text-red-400' : 'text-green-400'}>{demoResults.cost}</strong></span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Live Demo Area */}
+              <div className="mt-8 p-6 bg-secondary/50 rounded-lg">
+                <h4 className="text-lg font-semibold mb-4">Try It Yourself</h4>
+                <textarea
+                  placeholder="Paste your data challenge here..."
+                  className="w-full p-4 bg-background/50 border border-white/10 rounded-lg text-white placeholder-gray-400 min-h-[100px]"
+                />
+                <p className="text-sm text-muted-foreground mt-2">
+                  Experience the difference between waiting for APIs and instant processing
+                </p>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
       {/* AI Sovereignty Manifesto */}
       <section ref={sectionRefs.manifesto} id="manifesto" className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
@@ -633,6 +997,138 @@ export default function HomePage() {
                 </Button>
               </div>
             </GlassCard>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section ref={sectionRefs.pricing} id="pricing" className="py-24 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
+        <div className="container relative">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              True sovereignty at prices that make sense. No limits, no surprises.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+            {/* Beta Tier */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <GlassCard className="p-8 h-full flex flex-col">
+                <div className="mb-4">
+                  <h3 className="text-2xl font-bold mb-2">SOVREN AI Beta</h3>
+                  <p className="text-muted-foreground">Full platform access with community support</p>
+                </div>
+                <div className="mb-6">
+                  <span className="text-5xl font-bold">$297</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Full sovereignty features</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Unlimited processing</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Community support</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Documentation & tutorials</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Beta feedback priority</span>
+                  </li>
+                </ul>
+                <Button size="lg" variant="outline" className="w-full" asChild>
+                  <Link href="/contact">
+                    Get Started
+                  </Link>
+                </Button>
+              </GlassCard>
+            </motion.div>
+
+            {/* Beta Plus Tier */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <GlassCard className="p-8 h-full flex flex-col border-primary/50 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold">
+                  RECOMMENDED
+                </div>
+                <div className="mb-4">
+                  <h3 className="text-2xl font-bold mb-2">SOVREN AI Beta Plus</h3>
+                  <p className="text-muted-foreground">Everything in Beta plus priority support</p>
+                </div>
+                <div className="mb-6">
+                  <span className="text-5xl font-bold">$597</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Everything in Beta</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Priority email/chat support</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Custom onboarding session</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Monthly office hours</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                    <span>Direct founder access</span>
+                  </li>
+                </ul>
+                <Button size="lg" className="w-full bg-gradient-to-r from-primary to-cyan-500" asChild>
+                  <Link href="/contact">
+                    Get Started
+                  </Link>
+                </Button>
+              </GlassCard>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <p className="text-muted-foreground mb-4">
+              Need more? Let&apos;s discuss custom solutions for your organization.
+            </p>
+            <Button variant="outline" asChild>
+              <Link href="/contact">
+                Contact for Enterprise Pricing <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </motion.div>
         </div>
       </section>
