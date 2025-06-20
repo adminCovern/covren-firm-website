@@ -92,3 +92,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+/* globals.css (end of file) */
+@keyframes pulseOrb {
+  0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.6); }
+  70% { box-shadow: 0 0 0 20px rgba(255, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+.pulse-orb {
+  animation: pulseOrb 2s infinite;
+}
