@@ -14,18 +14,18 @@ function CinematicBackground() {
   const springX = useSpring(mouseX, springConfig)
   const springY = useSpring(mouseY, springConfig)
 
-useEffect(() => {
-  if (typeof window === 'undefined') return
-  
-  const handleMouseMove = (e) => {
-    const rect = document.body.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left) / rect.width)
-    mouseY.set((e.clientY - rect.top) / rect.height)
-  }
-  
-  window.addEventListener('mousemove', handleMouseMove)
-  return () => window.removeEventListener('mousemove', handleMouseMove)
-}, [mouseX, mouseY])
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    const handleMouseMove = (e) => {
+      const rect = document.body.getBoundingClientRect()
+      mouseX.set((e.clientX - rect.left) / rect.width)
+      mouseY.set((e.clientY - rect.top) / rect.height)
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
 
   return (
     <div className="fixed inset-0 pointer-events-none">
@@ -57,18 +57,18 @@ useEffect(() => {
       </div>
       
       {/* Floating particles */}
-     {[...Array(20)].map((_, i) => (
-  <motion.div
-    key={i}
-    className="absolute w-1 h-1 bg-red-500/30 rounded-full"
-    initial={{
-      x: Math.random() * 1920,
-      y: Math.random() * 1080,
-    }}
-    animate={{
-      x: Math.random() * 1920,
-      y: -20,
-    }}
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-red-500/30 rounded-full"
+          initial={{
+            x: Math.random() * 1920,
+            y: Math.random() * 1080,
+          }}
+          animate={{
+            x: Math.random() * 1920,
+            y: -20,
+          }}
           transition={{
             duration: Math.random() * 20 + 20,
             repeat: Infinity,
@@ -234,13 +234,6 @@ export default function SovrenAIPage() {
   const [isApplying, setIsApplying] = useState(false)
   
   const containerRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  })
-  
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.85])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.98])
 
   const handleApply = (tier) => {
     setIsApplying(true)
@@ -385,10 +378,7 @@ export default function SovrenAIPage() {
       <section id="pricing" className="py-24 relative bg-black text-white overflow-hidden">
         <CinematicBackground />
         
-        <motion.div 
-          style={{ opacity, scale }}
-          className="relative z-10"
-        >
+        <div className="relative z-10">
           <div className="container max-w-7xl mx-auto px-6">
             {/* Hero Section */}
             <motion.div
@@ -487,7 +477,7 @@ export default function SovrenAIPage() {
             >
               <p className="text-lg">
                 <span className="text-yellow-500 font-bold">⚡ LIMITED TIME:</span>{' '}
-                Phase 1 pricing ends when we hit 30 customers. Prices triple after.{' '}
+                Phase 1 pricing ends when we hit 30 customers. {' '}
                 <span className="text-yellow-400 font-bold">17 spots remaining.</span>
               </p>
             </motion.div>
@@ -610,7 +600,7 @@ export default function SovrenAIPage() {
                   <ul className="space-y-4 mb-8">
                     {[
                       'Everything in SOVREN Proof',
-                      'Priority support',
+                      'Priority support access',
                       'Direct founder access',
                       'Custom onboarding session',
                       'Monthly 1-on-1 strategy calls',
@@ -730,7 +720,7 @@ export default function SovrenAIPage() {
               </a>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
 
         <style jsx>{`
           @keyframes gradient {
