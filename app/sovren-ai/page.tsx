@@ -14,16 +14,18 @@ function CinematicBackground() {
   const springX = useSpring(mouseX, springConfig)
   const springY = useSpring(mouseY, springConfig)
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const rect = document.body.getBoundingClientRect()
-      mouseX.set((e.clientX - rect.left) / rect.width)
-      mouseY.set((e.clientY - rect.top) / rect.height)
-    }
-    
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+useEffect(() => {
+  if (typeof window === 'undefined') return
+  
+  const handleMouseMove = (e) => {
+    const rect = document.body.getBoundingClientRect()
+    mouseX.set((e.clientX - rect.left) / rect.width)
+    mouseY.set((e.clientY - rect.top) / rect.height)
+  }
+  
+  window.addEventListener('mousemove', handleMouseMove)
+  return () => window.removeEventListener('mousemove', handleMouseMove)
+}, [mouseX, mouseY])
 
   return (
     <div className="fixed inset-0 pointer-events-none">
@@ -55,18 +57,18 @@ function CinematicBackground() {
       </div>
       
       {/* Floating particles */}
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-red-500/30 rounded-full"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-          }}
-          animate={{
-            x: Math.random() * window.innerWidth,
-            y: -20,
-          }}
+     {[...Array(20)].map((_, i) => (
+  <motion.div
+    key={i}
+    className="absolute w-1 h-1 bg-red-500/30 rounded-full"
+    initial={{
+      x: Math.random() * 1920,
+      y: Math.random() * 1080,
+    }}
+    animate={{
+      x: Math.random() * 1920,
+      y: -20,
+    }}
           transition={{
             duration: Math.random() * 20 + 20,
             repeat: Infinity,
