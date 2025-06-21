@@ -685,7 +685,7 @@ export default function SovrenAIPage() {
               {[
                 { icon: Shield, label: 'SOC2 Compliant', desc: 'Enterprise-grade security' },
                 { icon: Lock, label: 'Zero Data Retention', desc: 'Your data, your control' },
-                { icon: GitBranch, label: 'Open Source Core', desc: 'Transparency first' },
+                {{ icon: Lock, label: 'Proprietary Stack', desc: 'Ground-up sovereign architecture' },
                 { icon: Globe, label: '99.99% Uptime', desc: 'Sovereign reliability' }
               ].map((item, i) => (
                 <motion.div
