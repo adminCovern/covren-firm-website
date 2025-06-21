@@ -239,8 +239,8 @@ export default function SovrenAIPage() {
     offset: ["start start", "end start"]
   })
   
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.85])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.98])
 
   const handleApply = (tier) => {
     setIsApplying(true)
