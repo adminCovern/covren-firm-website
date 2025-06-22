@@ -1,17 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import Link from "next/link"
 import { 
-  Brain, Code2, Shield, Building, LineChart, MessageSquare,
-  ChevronRight, Zap, Lock, Globe, Database, Server,
-  Users, Target, Sparkles, Award, Layers, TrendingUp,
-  ArrowRight, Power, Rocket, Binary, Network, ShieldCheck,
-  Crosshair, Flame, Timer, AlertTriangle
+  Shield, Brain, Cpu, Activity, Lock, Zap, ChevronRight, AlertTriangle, 
+  Terminal, BarChart3, Server, Database, Code2, Building, LineChart, 
+  MessageSquare, Target, TrendingUp, Clock, Users, Crosshair, Flame, 
+  Power, Fingerprint, Key, Timer, ArrowRight, Eye, Award, Sparkles,
+  Layers, Globe, Rocket, Binary, Network, ShieldCheck, Swords
 } from 'lucide-react'
 
-// Power Text Animation
+// Disable SSR for window-dependent components
+const isClient = typeof window !== 'undefined'
+
+// Powerful text animation - no glitches, just impact
 function PowerText({ children, className = "", delay = 0 }) {
   return (
     <motion.span
@@ -30,52 +33,96 @@ function PowerText({ children, className = "", delay = 0 }) {
   )
 }
 
-// Epic Background
+// Epic background that actually works
 function DominationBackground() {
+  const mouseX = useRef(0)
+  const mouseY = useRef(0)
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 })
+  
+  useEffect(() => {
+    if (!isClient) return
+    
+    const handleMouseMove = (e) => {
+      mouseX.current = e.clientX
+      mouseY.current = e.clientY
+      setCoordinates({ 
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20
+      })
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
   return (
-    <div className="fixed inset-0 -z-10">
-      <div className="absolute inset-0 bg-black" />
-      <motion.div
-        className="absolute top-1/3 -right-1/4 w-[800px] h-[800px] bg-purple-600/10 rounded-full blur-3xl"
-        animate={{
-          x: [-100, 0, -100],
-          y: [0, 100, 0],
-        }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <motion.div
-        className="absolute bottom-1/3 -left-1/4 w-[600px] h-[600px] bg-red-600/10 rounded-full blur-3xl"
-        animate={{
-          x: [0, 100, 0],
-          y: [0, -100, 0],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <div className="absolute inset-0 opacity-[0.02]">
-        <div 
-          className="h-full w-full"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff0000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+    <>
+      <div className="fixed inset-0 -z-10">
+        {/* Base gradient */}
+        <div className="absolute inset-0 bg-black" />
+        
+        {/* Dynamic gradient that follows mouse */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: `radial-gradient(circle 800px at ${50 + coordinates.x}% ${50 + coordinates.y}%, rgba(239, 68, 68, 0.15), transparent 40%)`
+          }}
+          transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+        />
+        
+        {/* Animated orbs */}
+        <motion.div
+          className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
         />
+        <motion.div
+          className="absolute bottom-1/4 -right-1/4 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl"
+          animate={{
+            x: [0, -100, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div 
+            className="h-full w-full"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(239, 68, 68, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(239, 68, 68, 0.5) 1px, transparent 1px)
+              `,
+              backgroundSize: '100px 100px',
+            }}
+          />
+        </div>
+        
+        {/* Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-30" />
       </div>
-    </div>
+    </>
   )
 }
 
-// Navigation
+// Navigation with impact
 function NavigationBar() {
   const [scrolled, setScrolled] = useState(false)
   
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -102,7 +149,7 @@ function NavigationBar() {
             <Link href="/sovren-ai" className="hover:text-red-500 transition-colors font-semibold">
               SOVREN AI
             </Link>
-            <Link href="/services" className="hover:text-red-500 transition-colors font-semibold text-red-500">
+            <Link href="/services" className="hover:text-red-500 transition-colors font-semibold">
               SERVICES
             </Link>
             <Link href="/about" className="hover:text-red-500 transition-colors font-semibold">
@@ -123,254 +170,520 @@ function NavigationBar() {
   )
 }
 
-// Service Card Component
-function ServiceCard({ service, index }) {
+// Weapon Card that actually works
+function WeaponCard({ weapon, index }) {
   const [isHovered, setIsHovered] = useState(false)
   
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ y: -10 }}
       className="relative group h-full"
     >
-      {/* Glow effect */}
-      <div className={`absolute inset-0 bg-gradient-to-r ${service.gradient} rounded-2xl blur-xl transition-opacity duration-300 ${
+      {/* Card glow effect */}
+      <div className={`absolute inset-0 bg-gradient-to-r ${weapon.gradient} rounded-xl blur-xl transition-opacity duration-300 ${
         isHovered ? 'opacity-30' : 'opacity-0'
       }`} />
       
       {/* Main card */}
-      <div className={`relative bg-gray-950/90 backdrop-blur-xl border-2 rounded-2xl h-full transition-all duration-300 overflow-hidden ${
+      <div className={`relative bg-gray-950/90 backdrop-blur-xl border-2 rounded-xl h-full transition-all duration-300 overflow-hidden ${
         isHovered ? 'border-red-500 shadow-2xl shadow-red-500/20' : 'border-gray-800'
       }`}>
         <div className="p-8 h-full flex flex-col">
           {/* Header */}
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex items-start justify-between mb-6">
             <motion.div
-              className={`w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-xl flex items-center justify-center flex-shrink-0`}
               animate={isHovered ? { rotate: [0, -10, 10, 0] } : {}}
               transition={{ duration: 0.5 }}
             >
-              <service.icon className="w-8 h-8 text-white" />
+              <weapon.icon className="w-14 h-14 text-red-500" />
             </motion.div>
-            <div className="flex-1">
-              <h3 className="text-2xl font-black mb-1">{service.title}</h3>
-              <p className="text-gray-400 text-sm font-mono">{service.subtitle}</p>
-            </div>
+            <span className={`px-3 py-1 rounded text-xs font-bold ${weapon.statusColor}`}>
+              {weapon.status}
+            </span>
           </div>
           
-          {/* Description */}
-          <p className="text-gray-300 mb-6 flex-grow">{service.description}</p>
+          {/* Content */}
+          <h3 className="text-2xl font-black mb-2">{weapon.title}</h3>
+          <p className="text-sm font-mono text-gray-500 mb-1">{weapon.designation}</p>
+          <p className="text-gray-400 mb-6 flex-grow">{weapon.description}</p>
           
           {/* Features */}
-          <ul className="space-y-3 mb-8">
-            {service.features.map((feature, idx) => (
-              <li key={idx} className="flex items-start gap-3">
+          <ul className="space-y-2 mb-6">
+            {weapon.features.slice(0, 3).map((feature, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm">
                 <Zap className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-gray-300">{feature}</span>
+                <span className="text-gray-300">{feature}</span>
               </li>
             ))}
           </ul>
           
-          {/* Stats & CTA */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              <span className={`text-3xl font-black bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
-                {service.stats.metric}
-              </span>
-              <span className="text-sm text-gray-500">{service.stats.label}</span>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="text-center">
+              <div className="text-xl font-bold text-red-500">{weapon.power}</div>
+              <div className="text-xs text-gray-500">POWER</div>
             </div>
-            
-            <Link href={service.link}>
-              <motion.button
-                className={`inline-flex items-center gap-2 bg-gradient-to-r ${service.gradient} text-white font-bold px-6 py-3 rounded-lg transition-all`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {service.cta}
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </Link>
+            <div className="text-center">
+              <div className="text-xl font-bold text-purple-500">{weapon.range}</div>
+              <div className="text-xs text-gray-500">RANGE</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-green-500">{weapon.impact}</div>
+              <div className="text-xs text-gray-500">IMPACT</div>
+            </div>
           </div>
+          
+          {/* CTA */}
+          <Link href={weapon.link}>
+            <motion.button
+              className="w-full py-3 rounded-lg font-bold text-center transition-all relative overflow-hidden group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                DEPLOY {weapon.codename}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </motion.button>
+          </Link>
         </div>
       </div>
     </motion.div>
   )
 }
 
-export default function ServicesPage() {
-  const services = [
+// Stats that actually animate properly
+function StatCounter({ value, label, icon: Icon, color }) {
+  const [count, setCount] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef(null)
+  
+  useEffect(() => {
+    if (!isClient) return
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+    
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+    
+    return () => observer.disconnect()
+  }, [isVisible])
+  
+  useEffect(() => {
+    if (isVisible) {
+      const duration = 2000
+      const steps = 60
+      const increment = value / steps
+      let current = 0
+      
+      const timer = setInterval(() => {
+        current += increment
+        if (current >= value) {
+          setCount(value)
+          clearInterval(timer)
+        } else {
+          setCount(Math.floor(current))
+        }
+      }, duration / steps)
+      
+      return () => clearInterval(timer)
+    }
+  }, [isVisible, value])
+  
+  const colors = {
+    red: 'text-red-500 bg-red-500/10 border-red-500/20',
+    purple: 'text-purple-500 bg-purple-500/10 border-purple-500/20',
+    green: 'text-green-500 bg-green-500/10 border-green-500/20',
+    blue: 'text-blue-500 bg-blue-500/10 border-blue-500/20'
+  }
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ scale: 1.05 }}
+      className={`relative ${colors[color]} backdrop-blur border rounded-xl p-8 text-center transition-all`}
+    >
+      <Icon className={`w-12 h-12 mx-auto mb-4 ${colors[color].split(' ')[0]}`} />
+      <div className={`text-5xl font-black mb-2 ${colors[color].split(' ')[0]}`}>
+        {count}+
+      </div>
+      <div className="text-sm text-gray-400">{label}</div>
+    </motion.div>
+  )
+}
+
+export default function HomePage() {
+  const { scrollY } = useScroll()
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
+  const heroScale = useTransform(scrollY, [0, 300], [1, 0.95])
+  
+  const weapons = [
     {
-      id: 'sovren-ai',
       icon: Brain,
-      title: 'SOVREN AI Platform',
-      subtitle: 'Compound Intelligence™',
-      description: 'Revolutionary AI that evolves with your business daily. While static AI depreciates, SOVREN compounds in value—learning, adapting, and multiplying your competitive advantage 24/7.',
+      title: "SOVREN AI",
+      codename: "[REDACTED]",
+      designation: "CLF-LVL-10",
+      status: "ARMED",
+      statusColor: "bg-green-900/50 text-green-400",
+      description: "Classified AI system delivering 2400% efficiency gains. How it works is need-to-know. What it delivers is undeniable.",
       features: [
-        'Self-improving intelligence that compounds knowledge',
-        '24/7 autonomous business operations',
-        'Learns and optimizes your unique patterns',
-        'Complete data sovereignty and control'
+        "Proprietary algorithms under NDA protection",
+        "Technical specs require Level 10 clearance",
+        "Results that make methodology irrelevant"
       ],
-      stats: { metric: '2400%', label: 'Efficiency gain' },
-      cta: 'Experience Evolution',
-      link: '/sovren-ai',
-      gradient: 'from-red-600 to-orange-600'
+      gradient: "from-red-600 to-orange-600",
+      power: "95%",
+      range: "∞",
+      impact: "2400%",
+      link: "/sovren-ai"
     },
     {
-      id: 'custom-dev',
       icon: Code2,
-      title: 'Custom AI Development',
-      subtitle: 'Bespoke Intelligence Systems',
-      description: 'When off-the-shelf fails, we build empires. Architect proprietary AI systems designed for your exact challenges, with complete IP ownership and zero dependencies.',
+      title: "CUSTOM AI",
+      codename: "[CLASSIFIED]",
+      designation: "NDA-REQ-X",
+      status: "READY",
+      statusColor: "bg-yellow-900/50 text-yellow-400",
+      description: "Bespoke AI systems built with methods our competitors can't access, understand, or replicate. Your advantage is permanent.",
       features: [
-        'Proprietary model architectures',
-        'Full-stack implementation',
-        'Complete intellectual property ownership',
-        'Military-grade security and compliance'
+        "Trade secret protected architectures",
+        "100% your IP, zero exposure",
+        "Technical details under strict NDA"
       ],
-      stats: { metric: '127+', label: 'Systems deployed' },
-      cta: 'Build Your Empire',
-      link: '/custom-development',
-      gradient: 'from-purple-600 to-pink-600'
+      gradient: "from-purple-600 to-pink-600",
+      power: "88%",
+      range: "CUSTOM",
+      impact: "$24M+",
+      link: "/custom-development"
     },
     {
-      id: 'enterprise',
-      icon: Building,
-      title: 'Enterprise Transformation',
-      subtitle: 'AI-Powered Evolution',
-      description: 'Transform your enterprise into an AI powerhouse. Strategic integration that revolutionizes operations, multiplies productivity, and creates insurmountable competitive advantages.',
-      features: [
-        'C-suite advisory and roadmapping',
-        'Organizational AI transformation',
-        'Legacy system modernization',
-        'Change management expertise'
-      ],
-      stats: { metric: '$24M+', label: 'Value generated' },
-      cta: 'Transform Today',
-      link: '/enterprise',
-      gradient: 'from-blue-600 to-cyan-600'
-    },
-    {
-      id: 'sovereign',
       icon: Shield,
-      title: 'Sovereign Infrastructure',
-      subtitle: 'Own Your AI Future',
-      description: 'Deploy AI systems you completely own and control. No vendor lock-in, no data leakage, no compromises. Your intelligence, your infrastructure, your rules.',
+      title: "SOVEREIGN SYSTEMS",
+      codename: "FORTRESS",
+      designation: "IND-DAY-1",
+      status: "FORTIFIED",
+      statusColor: "bg-blue-900/50 text-blue-400",
+      description: "Complete AI independence. No masters. No dependencies. Your data, your rules.",
       features: [
-        'On-premise deployment options',
-        'Zero vendor dependencies',
-        'Complete data sovereignty',
-        'Regulatory compliance built-in'
+        "On-premise deployment",
+        "Zero vendor lock-in",
+        "100% data sovereignty"
       ],
-      stats: { metric: '100%', label: 'Data control' },
-      cta: 'Claim Sovereignty',
-      link: '/sovereign-systems',
-      gradient: 'from-green-600 to-emerald-600'
+      gradient: "from-blue-600 to-cyan-600",
+      power: "90%",
+      range: "LOCAL",
+      impact: "100%",
+      link: "/sovereign-systems"
     },
     {
-      id: 'analytics',
+      icon: Building,
+      title: "ENTERPRISE AI",
+      codename: "WARFARE",
+      designation: "CRP-WAR-Z",
+      status: "DEPLOYED",
+      statusColor: "bg-purple-900/50 text-purple-400",
+      description: "Transform your enterprise into an AI war machine. Dominate markets through evolution.",
+      features: [
+        "C-suite transformation",
+        "Organization-wide AI",
+        "Legacy annihilation"
+      ],
+      gradient: "from-green-600 to-emerald-600",
+      power: "82%",
+      range: "GLOBAL",
+      impact: "89 WINS",
+      link: "/enterprise"
+    },
+    {
       icon: LineChart,
-      title: 'AI Analytics & Intelligence',
-      subtitle: 'Predictive Power Unleashed',
-      description: 'Turn data into predictive, actionable intelligence. Custom analytics systems that don\'t just report the past—they command the future.',
+      title: "AI ANALYTICS",
+      codename: "FORESIGHT",
+      designation: "FTR-SGT-7",
+      status: "SCANNING",
+      statusColor: "bg-orange-900/50 text-orange-400",
+      description: "See the future. Control the future. Predictive intelligence that eliminates uncertainty.",
       features: [
-        'Predictive modeling systems',
-        'Real-time decision engines',
-        'Custom dashboard solutions',
-        'Automated insight generation'
+        "Real-time prediction",
+        "Market algorithms",
+        "Future visualization"
       ],
-      stats: { metric: '47x', label: 'Faster decisions' },
-      cta: 'Unlock Intelligence',
-      link: '/analytics',
-      gradient: 'from-orange-600 to-yellow-600'
+      gradient: "from-orange-600 to-yellow-600",
+      power: "78%",
+      range: "TEMPORAL",
+      impact: "47X",
+      link: "/analytics"
     },
     {
-      id: 'consulting',
       icon: MessageSquare,
-      title: 'Strategic AI Consulting',
-      subtitle: 'Navigate the Revolution',
-      description: 'Expert guidance through the AI transformation. From technology stack assessment to competitive advantage mapping, we architect your path to dominance.',
+      title: "STRATEGIC AI",
+      codename: "MINDCTRL",
+      designation: "MND-CTL-9",
+      status: "ACTIVE",
+      statusColor: "bg-indigo-900/50 text-indigo-400",
+      description: "Reprogram your organization's DNA. Turn vision into market domination.",
       features: [
-        'AI readiness assessment',
-        'Technology stack optimization',
-        'Competitive advantage mapping',
-        'Implementation strategies'
+        "Executive optimization",
+        "Strategic positioning",
+        "Vision execution"
       ],
-      stats: { metric: '89', label: 'Enterprises guided' },
-      cta: 'Get Strategic',
-      link: '/consulting',
-      gradient: 'from-indigo-600 to-violet-600'
+      gradient: "from-indigo-600 to-purple-600",
+      power: "71%",
+      range: "MENTAL",
+      impact: "∞",
+      link: "/consulting"
     }
   ]
-  
+
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <DominationBackground />
       <NavigationBar />
       
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
-        <div className="container max-w-6xl mx-auto text-center">
+      {/* Hero Section - MAXIMUM FUCKING IMPACT */}
+      <motion.section 
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className="relative min-h-screen flex items-center justify-center px-6 pt-20"
+      >
+        <div className="container max-w-7xl mx-auto text-center relative z-10">
+          {/* Status indicators */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-3 mb-8"
           >
-            <div className="inline-flex items-center gap-2 bg-red-950/50 backdrop-blur border border-red-500/50 rounded-full px-6 py-2 mb-8">
-              <Sparkles className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-mono text-red-400">FULL-SPECTRUM AI DOMINANCE</span>
+            <div className="inline-flex items-center gap-2 bg-green-950/50 backdrop-blur border border-green-500/50 rounded-full px-4 py-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-xs font-mono text-green-400">SYSTEMS ONLINE</span>
             </div>
-            
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              <PowerText>SIX WAYS TO</PowerText>
-              <PowerText delay={0.2} className="block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-500 to-blue-500">
-                COMMAND THE FUTURE
-              </PowerText>
-            </h1>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto"
-            >
-              From revolutionary AI platforms to bespoke enterprise solutions, 
-              we don't just implement technology—we engineer dominance.
-            </motion.p>
+            <div className="inline-flex items-center gap-2 bg-red-950/50 backdrop-blur border border-red-500/50 rounded-full px-4 py-2">
+              <Crosshair className="w-4 h-4 text-red-500" />
+              <span className="text-xs font-bold text-red-400">6 WEAPONS ARMED</span>
+            </div>
+            <div className="inline-flex items-center gap-2 bg-yellow-950/50 backdrop-blur border border-yellow-500/50 rounded-full px-4 py-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-500 animate-pulse" />
+              <span className="text-xs font-mono text-yellow-400">TARGETS ACQUIRED</span>
+            </div>
           </motion.div>
           
-          {/* Warning */}
+          {/* Main headline - NO GLITCHES, JUST POWER */}
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-8 leading-none">
+            <PowerText className="block mb-2">WE DON'T</PowerText>
+            <PowerText delay={0.2} className="block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 mb-4">
+              SOLVE PROBLEMS
+            </PowerText>
+            <PowerText delay={0.4} className="block">WE</PowerText>
+            <PowerText delay={0.6} className="block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-purple-600 to-blue-600">
+              ELIMINATE THEM
+            </PowerText>
+          </h1>
+          
+          {/* Subtitle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-8 inline-flex items-center gap-3 bg-yellow-950/20 border border-yellow-500/30 rounded-lg px-6 py-3"
+            transition={{ delay: 0.8 }}
+            className="max-w-4xl mx-auto mb-12"
           >
-            <AlertTriangle className="w-5 h-5 text-yellow-500" />
-            <span className="text-sm font-mono text-yellow-500">
-              WARNING: Each service creates irreversible competitive advantages
-            </span>
+            <p className="text-xl md:text-2xl text-gray-400 mb-4">
+              Six classified weapon systems. Each delivering results our competitors can't match—or understand.
+            </p>
+            <p className="text-lg md:text-xl text-red-500 font-bold">
+              How we do it is classified. What we deliver is legendary.
+            </p>
+          </motion.div>
+          
+          {/* Countdown */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1 }}
+            className="mb-12 flex justify-center"
+          >
+            <div className="bg-black/80 backdrop-blur-xl border-2 border-red-500/50 rounded-xl p-6 inline-block">
+              <p className="text-sm text-gray-400 mb-3">PHASE 1 DEPLOYMENT WINDOW</p>
+              <div className="flex items-center gap-3 font-mono text-3xl md:text-4xl">
+                <div className="text-center">
+                  <div className="text-red-500 font-bold">14</div>
+                  <div className="text-xs text-gray-500 mt-1">DAYS</div>
+                </div>
+                <span className="text-red-500 animate-pulse">:</span>
+                <div className="text-center">
+                  <div className="text-red-500 font-bold">23</div>
+                  <div className="text-xs text-gray-500 mt-1">HOURS</div>
+                </div>
+                <span className="text-red-500 animate-pulse">:</span>
+                <div className="text-center">
+                  <div className="text-red-500 font-bold">47</div>
+                  <div className="text-xs text-gray-500 mt-1">MINS</div>
+                </div>
+              </div>
+              <div className="mt-3">
+                <p className="text-xs text-red-400 font-bold">11 POSITIONS REMAINING</p>
+                <div className="mt-2 h-2 bg-gray-900 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-red-600 to-orange-600"
+                    initial={{ width: 0 }}
+                    animate={{ width: '63%' }}
+                    transition={{ duration: 1.5, delay: 1.2 }}
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <motion.a
+              href="#weapons"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg flex items-center justify-center gap-2 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              EXPLORE ARSENAL
+              <Crosshair className="w-5 h-5" />
+            </motion.a>
+            
+            <motion.a
+              href="/contact"
+              className="bg-black border-2 border-red-600 hover:bg-red-950/30 text-red-500 font-bold py-4 px-8 rounded-lg flex items-center justify-center gap-2 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              INITIATE CONTACT
+              <Terminal className="w-5 h-5" />
+            </motion.a>
+          </motion.div>
+        </div>
+        
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <ChevronRight className="w-6 h-6 text-gray-500 rotate-90" />
+          </motion.div>
+        </motion.div>
+      </motion.section>
+      
+      {/* Weapon Systems - The Arsenal */}
+      <section id="weapons" className="py-32 px-6 relative">
+        <div className="container max-w-7xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-block mb-6"
+            >
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <Crosshair className="w-8 h-8 text-red-500" />
+                <span className="text-2xl font-mono text-red-500">WEAPON SELECTION</span>
+                <Crosshair className="w-8 h-8 text-red-500" />
+              </div>
+            </motion.div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+              CHOOSE YOUR WEAPON
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Six paths to absolute dominance. Each system engineered to obliterate specific market weaknesses.
+            </p>
+            <p className="text-lg text-red-500 font-bold mt-2">
+              Warning: Deployment results in irreversible competitive advantages.
+            </p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {weapons.map((weapon, idx) => (
+              <WeaponCard key={idx} weapon={weapon} index={idx} />
+            ))}
+          </div>
+          
+          {/* IP Protection Notice */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
+            <div className="bg-black/90 border-2 border-red-500/50 rounded-xl p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4">
+                <div className="flex items-center gap-2 bg-red-950/50 px-3 py-1 rounded">
+                  <Lock className="w-4 h-4 text-red-500" />
+                  <span className="text-xs font-mono text-red-400">CLASSIFIED</span>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <ShieldCheck className="w-8 h-8 text-red-500 flex-shrink-0" />
+                <div>
+                  <h3 className="text-xl font-black text-red-500 mb-2">INTELLECTUAL PROPERTY NOTICE</h3>
+                  <p className="text-gray-400 mb-4">
+                    SOVREN AI's core technology is protected by trade secrets, patents pending, and strict classification protocols. 
+                    While our competitors chase yesterday's technology, our methods remain generations ahead—and completely inaccessible.
+                  </p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="bg-gray-950/50 rounded p-3">
+                      <Fingerprint className="w-5 h-5 text-red-500 mb-2" />
+                      <p className="text-xs font-bold text-gray-300">BIOMETRIC VERIFICATION</p>
+                      <p className="text-xs text-gray-500">Required for technical access</p>
+                    </div>
+                    <div className="bg-gray-950/50 rounded p-3">
+                      <Key className="w-5 h-5 text-red-500 mb-2" />
+                      <p className="text-xs font-bold text-gray-300">NDA MANDATORY</p>
+                      <p className="text-xs text-gray-500">Before any specifications</p>
+                    </div>
+                    <div className="bg-gray-950/50 rounded p-3">
+                      <Binary className="w-5 h-5 text-red-500 mb-2" />
+                      <p className="text-xs font-bold text-gray-300">LEVEL 10 CLEARANCE</p>
+                      <p className="text-xs text-gray-500">For architecture details</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-red-400 font-mono mt-4">
+                    Technical briefings available only to contracted clients under strict confidentiality agreements.
+                  </p>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
       
-      {/* Services Grid */}
-      <section className="py-20 px-6">
-        <div className="container max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {services.map((service, idx) => (
-              <ServiceCard key={service.id} service={service} index={idx} />
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Comparison Section */}
-      <section className="py-32 px-6 border-t border-gray-800">
+      {/* Dominance Metrics */}
+      <section className="py-32 px-6 bg-gradient-to-b from-transparent via-red-950/5 to-transparent">
         <div className="container max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -378,112 +691,126 @@ export default function ServicesPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
-              WHY <span className="text-red-500">COVREN</span> DOMINATES
-            </h2>
-            <p className="text-xl text-gray-400">
-              While others offer tools, we deliver transformation.
-            </p>
+            <BarChart3 className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-4xl md:text-5xl font-black mb-4">DOMINANCE VERIFIED</h2>
+            <p className="text-xl text-gray-400">Real-time proof of market supremacy.</p>
           </motion.div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "OWNERSHIP",
-                covren: "100% your code, your data, your empire",
-                others: "Vendor lock-in, subscription slavery",
-                icon: Lock
-              },
-              {
-                title: "EVOLUTION",
-                covren: "AI that improves daily, compounds value",
-                others: "Static tools that depreciate",
-                icon: TrendingUp
-              },
-              {
-                title: "RESULTS",
-                covren: "2400% average efficiency gains",
-                others: "Marginal improvements at best",
-                icon: Target
-              }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="relative"
-              >
-                <div className="bg-gray-950/90 backdrop-blur border border-gray-800 rounded-xl p-6">
-                  <item.icon className="w-8 h-8 text-red-500 mb-4" />
-                  <h3 className="text-xl font-black mb-4">{item.title}</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="bg-green-950/30 border border-green-500/30 rounded-lg p-4">
-                      <p className="text-sm font-bold text-green-500 mb-1">COVREN</p>
-                      <p className="text-sm text-gray-300">{item.covren}</p>
-                    </div>
-                    
-                    <div className="bg-red-950/20 border border-red-500/20 rounded-lg p-4">
-                      <p className="text-sm font-bold text-red-500 mb-1">OTHERS</p>
-                      <p className="text-sm text-gray-400">{item.others}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <StatCounter value={127} label="AI Systems Deployed" icon={Server} color="red" />
+            <StatCounter value={89} label="Enterprises Transformed" icon={Building} color="purple" />
+            <StatCounter value={2400} label="% Efficiency Gains" icon={TrendingUp} color="green" />
+            <StatCounter value={47} label="Proprietary Innovations" icon={Brain} color="blue" />
           </div>
+          
+          {/* Trust badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 text-center"
+          >
+            <p className="text-lg text-gray-400 mb-8">
+              Trusted by industry titans who understand that second place is first loser.
+            </p>
+            <div className="flex flex-wrap justify-center gap-8 opacity-30">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="w-32 h-12 bg-gray-800 rounded animate-pulse" />
+              ))}
+            </div>
+          </motion.div>
+          
+          {/* Classification Badge */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-16 flex justify-center"
+          >
+            <div className="bg-black/90 border border-red-500/50 rounded-lg p-6 inline-block text-center">
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <Binary className="w-6 h-6 text-red-500" />
+                <Shield className="w-8 h-8 text-red-500" />
+                <Lock className="w-6 h-6 text-red-500" />
+              </div>
+              <p className="text-sm font-mono text-red-400 font-bold">TECHNOLOGY CLASSIFICATION: MAXIMUM</p>
+              <p className="text-xs text-gray-500 mt-2">
+                Core algorithms and methodologies protected under trade secret law
+              </p>
+              <p className="text-xs text-gray-600 mt-1">
+                Attempted reverse engineering will be prosecuted to the fullest extent
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
       
-      {/* CTA Section */}
-      <section className="py-32 px-6">
-        <div className="container max-w-4xl mx-auto">
+      {/* Final CTA - Maximum Urgency */}
+      <section className="py-32 px-6 relative">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-purple-600/10 to-blue-600/10" />
+        </div>
+        
+        <div className="container max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative"
+            className="bg-black/90 backdrop-blur-xl border-2 border-red-600 rounded-2xl p-12 md:p-16 relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-purple-600/20 to-blue-600/20 blur-3xl" />
-            <div className="relative bg-gradient-to-br from-gray-950 to-black border-2 border-red-600 rounded-2xl p-12 text-center">
-              <Award className="w-16 h-16 text-red-500 mx-auto mb-6" />
-              <h2 className="text-4xl md:text-5xl font-black mb-4">
-                WHICH FUTURE WILL YOU BUILD?
-              </h2>
-              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Every service. One mission. Your dominance.
-              </p>
-              
-              {/* Countdown */}
-              <div className="bg-black/50 border border-red-500/30 rounded-lg p-4 inline-block mb-8">
-                <p className="text-sm text-gray-400 mb-2">LIMITED PHASE 1 POSITIONS</p>
-                <div className="flex items-center gap-2 text-2xl font-mono font-bold text-red-500">
-                  <Timer className="w-6 h-6" />
-                  <span>11 REMAINING</span>
-                </div>
+            {/* Animated border */}
+            <motion.div
+              className="absolute inset-0 border-2 border-red-500 rounded-2xl"
+              animate={{
+                opacity: [0, 0.5, 0],
+                scale: [0.95, 1.05, 0.95],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+              }}
+            />
+            
+            <Flame className="w-16 h-16 text-red-600 mx-auto mb-6" />
+            
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">
+              READY TO DOMINATE?
+            </h2>
+            <p className="text-xl text-gray-300 mb-4">
+              The future belongs to those who strike first. Every second you hesitate, your competition gets stronger.
+            </p>
+            <p className="text-2xl text-red-500 font-bold mb-8">
+              What are you waiting for?
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex items-center gap-2">
+                <Timer className="w-5 h-5 text-yellow-500 animate-pulse" />
+                <span className="text-sm text-gray-400">11 positions left</span>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.a
-                  href="/contact"
-                  className="bg-white text-black font-bold py-4 px-8 rounded-lg hover:bg-gray-100 transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Schedule Strategy Call
-                </motion.a>
-                <motion.a
-                  href="/sovren-ai/apply"
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Apply for SOVREN AI
-                </motion.a>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-orange-500" />
+                <span className="text-sm text-gray-400">2,847 competitors eliminated</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-500" />
+                <span className="text-sm text-gray-400">2400% avg gains</span>
               </div>
             </div>
+            
+            <motion.a
+              href="/sovren-ai"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-black py-5 px-10 rounded-lg text-xl transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              DEPLOY WEAPON SYSTEMS
+              <Zap className="w-6 h-6" />
+            </motion.a>
+            
+            <p className="text-sm text-red-400 mt-6 font-mono">
+              WARNING: This decision will change everything.
+            </p>
           </motion.div>
         </div>
       </section>
