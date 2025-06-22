@@ -4,13 +4,38 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { 
   Terminal, Brain, Shield, Zap, ChevronRight, Check, AlertTriangle, Lock, 
-  Activity, Server, Database, Code2, Sparkles, BarChart3, Target, Users, 
+  Activity, Server, Database, Code2, Sparkles, BarChart3, Target, Users,
   Clock, Crosshair, Fingerprint, Eye, ShieldAlert, Binary, Key, Skull,
   Radio, AlertCircle, Timer, Power, Siren, Navigation
 } from 'lucide-react'
 
+// Type definitions
+interface GlitchTextProps {
+  children: React.ReactNode
+  className?: string
+  intensity?: string
+}
+
+interface TypewriterTextProps {
+  text: string
+  delay?: number
+}
+
+interface ApplicationProgressProps {
+  currentStep: number
+  totalSteps: number
+}
+
+interface QualificationScoreProps {
+  score: number
+}
+
+interface SecurityScannerProps {
+  active?: boolean
+}
+
 // Enhanced glitch effect
-function GlitchText({ children, className = "", intensity = "medium" }) {
+function GlitchText({ children, className = "", intensity = "medium" }: GlitchTextProps) {
   const [glitch, setGlitch] = useState(false)
   
   useEffect(() => {
@@ -41,7 +66,7 @@ function GlitchText({ children, className = "", intensity = "medium" }) {
 }
 
 // Enhanced typing effect
-function TypewriterText({ text, delay = 50 }) {
+function TypewriterText({ text, delay = 50 }: TypewriterTextProps) {
   const [displayText, setDisplayText] = useState('')
   
   useEffect(() => {
@@ -67,7 +92,7 @@ function TypewriterText({ text, delay = 50 }) {
 }
 
 // Military-grade progress indicator
-function ApplicationProgress({ currentStep, totalSteps }) {
+function ApplicationProgress({ currentStep, totalSteps }: ApplicationProgressProps) {
   const progress = (currentStep / totalSteps) * 100
   
   return (
@@ -123,7 +148,7 @@ function ApplicationProgress({ currentStep, totalSteps }) {
 }
 
 // Enhanced qualification visualization
-function QualificationScore({ score }) {
+function QualificationScore({ score }: QualificationScoreProps) {
   const scoreColor = score >= 80 ? 'text-green-500' : score >= 60 ? 'text-yellow-500' : 'text-red-500'
   const scoreLabel = score >= 80 ? 'WEAPON READY' : score >= 60 ? 'CLEARANCE PENDING' : 'ADDITIONAL SCREENING'
   const threatLevel = score >= 80 ? 'MINIMAL' : score >= 60 ? 'MODERATE' : 'ELEVATED'
@@ -244,7 +269,7 @@ function DynamicBackground() {
 }
 
 // Security scanner animation
-function SecurityScanner({ active = false }) {
+function SecurityScanner({ active = false }: SecurityScannerProps) {
   return (
     <AnimatePresence>
       {active && (
@@ -345,7 +370,7 @@ export default function SovrenApplicationUltimate() {
     return Math.min(score, 100)
   }
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -485,7 +510,6 @@ export default function SovrenApplicationUltimate() {
               </div>
             </div>
             
-            {/* Security notice */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -542,7 +566,7 @@ export default function SovrenApplicationUltimate() {
                       }`}
                     >
                       {size}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
@@ -679,11 +703,12 @@ export default function SovrenApplicationUltimate() {
                       whileHover={{ scale: 1.02 }}
                       className={`p-6 rounded-lg border-2 transition-all duration-300 relative overflow-hidden group ${
                         formData.dataSensitivity === level.value
-                          ? `bg-${level.color}-600/20 border-${level.color}-500 shadow-lg shadow-${level.color}-500/30`
+                          ? level.color === 'green' ? 'bg-green-600/20 border-green-500 shadow-lg shadow-green-500/30' :
+                            level.color === 'yellow' ? 'bg-yellow-600/20 border-yellow-500 shadow-lg shadow-yellow-500/30' :
+                            'bg-red-600/20 border-red-500 shadow-lg shadow-red-500/30'
                           : 'bg-gray-900/30 border-gray-700 hover:border-gray-600'
                       }`}
                     >
-                      {/* Background pulse */}
                       {formData.dataSensitivity === level.value && (
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -693,7 +718,11 @@ export default function SovrenApplicationUltimate() {
                       )}
                       
                       <Shield className={`w-10 h-10 mb-3 mx-auto relative z-10 ${
-                        formData.dataSensitivity === level.value ? `text-${level.color}-500` : 'text-gray-600'
+                        formData.dataSensitivity === level.value 
+                          ? level.color === 'green' ? 'text-green-500' :
+                            level.color === 'yellow' ? 'text-yellow-500' :
+                            'text-red-500'
+                          : 'text-gray-600'
                       }`} />
                       <div className="font-bold relative z-10">{level.label}</div>
                       <div className="text-xs text-gray-400 relative z-10">{level.desc}</div>
@@ -731,12 +760,20 @@ export default function SovrenApplicationUltimate() {
                       whileHover={{ y: -5 }}
                       className={`p-4 rounded-lg border-2 transition-all duration-300 group ${
                         formData.timeline === timeline.value
-                          ? `bg-${timeline.color}-600/20 border-${timeline.color}-500`
+                          ? timeline.color === 'red' ? 'bg-red-600/20 border-red-500' :
+                            timeline.color === 'orange' ? 'bg-orange-600/20 border-orange-500' :
+                            timeline.color === 'yellow' ? 'bg-yellow-600/20 border-yellow-500' :
+                            'bg-blue-600/20 border-blue-500'
                           : 'bg-gray-900/30 border-gray-700 hover:border-gray-600'
                       }`}
                     >
                       <timeline.icon className={`w-8 h-8 mb-2 mx-auto ${
-                        formData.timeline === timeline.value ? `text-${timeline.color}-500` : 'text-gray-600'
+                        formData.timeline === timeline.value 
+                          ? timeline.color === 'red' ? 'text-red-500' :
+                            timeline.color === 'orange' ? 'text-orange-500' :
+                            timeline.color === 'yellow' ? 'text-yellow-500' :
+                            'text-blue-500'
+                          : 'text-gray-600'
                       } group-hover:animate-pulse`} />
                       <div className="font-bold text-sm">{timeline.label}</div>
                       <div className="text-xs text-gray-500">{timeline.desc}</div>
@@ -848,7 +885,6 @@ export default function SovrenApplicationUltimate() {
                           : 'bg-gray-900/30 border-gray-700 hover:border-gray-600'
                       }`}
                     >
-                      {/* Animated background */}
                       {formData.commitment === level.value && (
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-transparent"
@@ -879,7 +915,6 @@ export default function SovrenApplicationUltimate() {
               </div>
             </div>
             
-            {/* Final warning */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
