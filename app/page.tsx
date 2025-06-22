@@ -225,11 +225,11 @@ function ExtremeCinematicBackground() {
               'w-1 h-1 bg-green-500/40'
             }`}
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
             }}
             animate={{
-              x: Math.random() * window.innerWidth,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
               y: -20,
             }}
             transition={{
@@ -337,7 +337,7 @@ function ThreatDetectionSystem() {
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 1 }}
-      className="fixed top-24 right-6 z-50 w-96"
+      className="fixed top-24 right-6 z-50 w-96 hidden lg:block"
     >
       <div className="bg-black/90 backdrop-blur-xl border border-red-900/50 rounded-lg overflow-hidden">
         {/* Header */}
@@ -1362,6 +1362,35 @@ function AnimatedStat({ value, label, icon: Icon, color, suffix = '+' }) {
     }
   }, [isVisible, count, value])
   
+  const colorClasses = {
+    red: {
+      icon: 'text-red-500',
+      text: 'text-red-500',
+      particle: 'bg-red-500',
+      hover: 'from-red-600/20 to-red-700/20'
+    },
+    purple: {
+      icon: 'text-purple-500',
+      text: 'text-purple-500',
+      particle: 'bg-purple-500',
+      hover: 'from-purple-600/20 to-purple-700/20'
+    },
+    green: {
+      icon: 'text-green-500',
+      text: 'text-green-500',
+      particle: 'bg-green-500',
+      hover: 'from-green-600/20 to-green-700/20'
+    },
+    blue: {
+      icon: 'text-blue-500',
+      text: 'text-blue-500',
+      particle: 'bg-blue-500',
+      hover: 'from-blue-600/20 to-blue-700/20'
+    }
+  }
+  
+  const colors = colorClasses[color]
+  
   return (
     <motion.div
       ref={ref}
@@ -1371,7 +1400,7 @@ function AnimatedStat({ value, label, icon: Icon, color, suffix = '+' }) {
       whileHover={{ scale: 1.05, y: -5 }}
       className="relative group"
     >
-      <div className={`absolute inset-0 bg-gradient-to-r from-${color}-600/20 to-${color}-700/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
+      <div className={`absolute inset-0 bg-gradient-to-r ${colors.hover} blur-xl opacity-0 group-hover:opacity-100 transition-opacity`} />
       <div className="relative bg-black/80 backdrop-blur border border-gray-800 group-hover:border-red-500/50 rounded-xl p-8 text-center transition-all overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-5">
@@ -1385,10 +1414,10 @@ function AnimatedStat({ value, label, icon: Icon, color, suffix = '+' }) {
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="relative z-10"
         >
-          <Icon className={`w-14 h-14 text-${color}-500 mx-auto mb-4`} />
+          <Icon className={`w-14 h-14 ${colors.icon} mx-auto mb-4`} />
         </motion.div>
         
-        <div className={`text-5xl font-black text-${color}-500 mb-2 relative z-10`}>
+        <div className={`text-5xl font-black ${colors.text} mb-2 relative z-10`}>
           {count}{suffix}
         </div>
         <div className="text-sm text-gray-400 relative z-10">{label}</div>
@@ -1398,7 +1427,7 @@ function AnimatedStat({ value, label, icon: Icon, color, suffix = '+' }) {
           {particles.map((particle) => (
             <motion.div
               key={particle.id}
-              className={`absolute w-2 h-2 bg-${color}-500 rounded-full`}
+              className={`absolute w-2 h-2 ${colors.particle} rounded-full`}
               initial={{ 
                 x: '50%', 
                 y: '50%',
@@ -2208,7 +2237,7 @@ export default function HomePage() {
               </div>
               <div className="text-center">
                 <Zap className="w-10 h-10 text-purple-500 mx-auto mb-4" />
-                <div className="text-3xl font-bold text-purple-500 mb-2"><3ms</div>
+                <div className="text-3xl font-bold text-purple-500 mb-2">&lt;3ms</div>
                 <p className="text-sm text-gray-400">Response Time</p>
               </div>
             </div>
