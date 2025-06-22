@@ -5,6 +5,9 @@ import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSp
 import Link from "next/link"
 import { Shield, Brain, Cpu, Activity, Lock, Zap, ChevronRight, AlertTriangle, CheckCircle, XCircle, Terminal, BarChart3, Globe, Sparkles, Server, Database, GitBranch, Code2, Check, Settings, SlidersHorizontal, BrainCircuit, ShieldCheck, Layers, Building, LineChart, MessageSquare, Award, Target, Eye, TrendingUp, Clock, Users, Skull, Timer, AlertCircle, Crosshair, Flame, ArrowRight, Gauge, Binary, Network, Atom, Boxes, CircuitBoard, Wifi, Power, Radar, Satellite, Command, Fingerprint, Key, ShieldAlert, ShieldOff, Swords, Bomb, Navigation, Compass, Map, Anchor, Radio } from 'lucide-react'
 
+// Disable SSR for window-dependent components
+const isClient = typeof window !== 'undefined'
+
 // Glitch text effect component with enhanced animations
 function GlitchText({ children, className = "", intensity = "medium" }) {
   const [glitch, setGlitch] = useState(false)
@@ -65,6 +68,8 @@ function MatrixRain() {
   const animationRef = useRef(null)
   
   useEffect(() => {
+    if (!isClient) return
+    
     const canvas = canvasRef.current
     if (!canvas) return
     
@@ -120,7 +125,7 @@ function MatrixRain() {
     }
   }, [])
   
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none opacity-10 z-0" />
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none opacity-10" style={{ zIndex: 0 }} />
 }
 
 // Enhanced cinematic background with multiple parallax layers
@@ -131,7 +136,7 @@ function ExtremeCinematicBackground() {
   const smoothMouseY = useSpring(mouseY, { damping: 25, stiffness: 150 })
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (!isClient) return
     
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX / window.innerWidth)
@@ -144,7 +149,7 @@ function ExtremeCinematicBackground() {
 
   return (
     <>
-      <div className="fixed inset-0 pointer-events-none z-0">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
         {/* Base gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black" />
         
@@ -214,7 +219,7 @@ function ExtremeCinematicBackground() {
         </div>
         
         {/* Floating particles system */}
-        {[...Array(150)].map((_, i) => (
+        {isClient && [...Array(150)].map((_, i) => (
           <motion.div
             key={i}
             className={`absolute rounded-full ${
@@ -225,11 +230,11 @@ function ExtremeCinematicBackground() {
               'w-1 h-1 bg-green-500/40'
             }`}
             initial={{
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
-              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
             }}
             animate={{
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+              x: Math.random() * window.innerWidth,
               y: -20,
             }}
             transition={{
@@ -262,7 +267,7 @@ function ExtremeCinematicBackground() {
       </div>
       
       {/* Scanline effects */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 10 }}>
         <motion.div
           className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"
           initial={{ top: 0 }}
@@ -278,7 +283,7 @@ function ExtremeCinematicBackground() {
       </div>
       
       {/* Vignette effect */}
-      <div className="fixed inset-0 pointer-events-none z-10">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-50" />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-50" />
       </div>
@@ -294,6 +299,8 @@ function ThreatDetectionSystem() {
   const [activeProtocols, setActiveProtocols] = useState([])
   
   useEffect(() => {
+    if (!isClient) return
+    
     // Initialize protocols
     setActiveProtocols([
       { id: 1, name: 'FIREWALL', status: 'ACTIVE', strength: 98 },
@@ -337,7 +344,8 @@ function ThreatDetectionSystem() {
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 1 }}
-      className="fixed top-24 right-6 z-50 w-96 hidden lg:block"
+      className="fixed top-24 right-6 hidden lg:block"
+      style={{ zIndex: 50, width: '384px' }}
     >
       <div className="bg-black/90 backdrop-blur-xl border border-red-900/50 rounded-lg overflow-hidden">
         {/* Header */}
@@ -492,6 +500,8 @@ function ExtremeInfrastructureMonitor() {
   const [accessDenied, setAccessDenied] = useState(false)
 
   useEffect(() => {
+    if (!isClient) return
+    
     const interval = setInterval(() => {
       setMetrics(prev => ({
         ...prev,
@@ -868,7 +878,8 @@ function ServiceWeaponCard({ service, index }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 pointer-events-none z-20"
+              className="absolute inset-0 pointer-events-none"
+              style={{ zIndex: 20 }}
             >
               {/* Crosshair */}
               <div className="absolute top-4 right-4">
@@ -936,7 +947,8 @@ function ServiceWeaponCard({ service, index }) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute bottom-4 left-4 right-4 bg-black/90 backdrop-blur border border-red-500/50 rounded-lg p-3 z-30"
+                className="absolute bottom-4 left-4 right-4 bg-black/90 backdrop-blur border border-red-500/50 rounded-lg p-3"
+                style={{ zIndex: 30 }}
               >
                 <p className="text-xs font-mono text-red-400 mb-2">THREAT ASSESSMENT</p>
                 <div className="space-y-1">
@@ -1175,6 +1187,8 @@ function CountdownSystem() {
   const [urgencyLevel, setUrgencyLevel] = useState('normal')
   
   useEffect(() => {
+    if (!isClient) return
+    
     const interval = setInterval(() => {
       setTimeLeft(prev => {
         let { days, hours, minutes, seconds } = prev
@@ -1325,6 +1339,8 @@ function AnimatedStat({ value, label, icon: Icon, color, suffix = '+' }) {
   const ref = useRef(null)
   
   useEffect(() => {
+    if (!isClient) return
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !isVisible) {
@@ -1459,7 +1475,8 @@ function NavigationIndicator({ sections, currentSection }) {
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
+      className="fixed left-6 top-1/2 -translate-y-1/2 hidden lg:block"
+      style={{ zIndex: 40 }}
     >
       <div className="space-y-4">
         {sections.map((section, index) => (
@@ -1678,6 +1695,8 @@ export default function HomePage() {
   
   // Track current section
   useEffect(() => {
+    if (!isClient) return
+    
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight / 2
       
