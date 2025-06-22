@@ -14,7 +14,7 @@ import {
 // Disable SSR for window-dependent components
 const isClient = typeof window !== 'undefined'
 
-// Powerful text animation - no glitches, just impact
+// Power Text Animation
 function PowerText({ children, className = "", delay = 0 }) {
   return (
     <motion.span
@@ -133,7 +133,7 @@ function NavigationBar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-red-900/50' : ''
+        scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-red-900/50' : 'bg-black/50 backdrop-blur-md'
       }`}
     >
       <div className="container max-w-7xl mx-auto px-6 py-4">
@@ -239,8 +239,8 @@ function WeaponCard({ weapon, index }) {
             </div>
           </div>
           
-          {/* CTA */}
-          <Link href={weapon.link}>
+          {/* CTA - Fixed Link */}
+          <Link href={weapon.link} className="block">
             <motion.button
               className="w-full py-3 rounded-lg font-bold text-center transition-all relative overflow-hidden group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
               whileHover={{ scale: 1.02 }}
@@ -456,10 +456,10 @@ export default function HomePage() {
       <DominationBackground />
       <NavigationBar />
       
-      {/* Hero Section - MAXIMUM FUCKING IMPACT */}
+      {/* Hero Section - FIXED PADDING FOR NAV */}
       <motion.section 
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative min-h-screen flex items-center justify-center px-6 pt-20"
+        className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20"
       >
         <div className="container max-w-7xl mx-auto text-center relative z-10">
           {/* Status indicators */}
@@ -566,15 +566,16 @@ export default function HomePage() {
               <Crosshair className="w-5 h-5" />
             </motion.a>
             
-            <motion.a
-              href="/contact"
-              className="bg-black border-2 border-red-600 hover:bg-red-950/30 text-red-500 font-bold py-4 px-8 rounded-lg flex items-center justify-center gap-2 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              INITIATE CONTACT
-              <Terminal className="w-5 h-5" />
-            </motion.a>
+            <Link href="/contact">
+              <motion.button
+                className="w-full bg-black border-2 border-red-600 hover:bg-red-950/30 text-red-500 font-bold py-4 px-8 rounded-lg flex items-center justify-center gap-2 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                INITIATE CONTACT
+                <Terminal className="w-5 h-5" />
+              </motion.button>
+            </Link>
           </motion.div>
         </div>
         
@@ -798,15 +799,16 @@ export default function HomePage() {
               </div>
             </div>
             
-            <motion.a
-              href="/sovren-ai"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-black py-5 px-10 rounded-lg text-xl transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              DEPLOY WEAPON SYSTEMS
-              <Zap className="w-6 h-6" />
-            </motion.a>
+            <Link href="/sovren-ai">
+              <motion.button
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-black py-5 px-10 rounded-lg text-xl transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                DEPLOY WEAPON SYSTEMS
+                <Zap className="w-6 h-6" />
+              </motion.button>
+            </Link>
             
             <p className="text-sm text-red-400 mt-6 font-mono">
               WARNING: This decision will change everything.
