@@ -23,7 +23,7 @@ export default function Hero() {
           className="mt-10 px-6 py-3 text-lg font-semibold border border-white rounded-xl hover:bg-white hover:text-black transition-colors"
           onClick={() => window.location.href = '/command-core'}
         >
-          ENTER THE COMMAND CORE
+          ENTER THE COMMAND CORE 
         </motion.button>
       </motion.div>
     </div>
